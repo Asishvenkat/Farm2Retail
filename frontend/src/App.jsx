@@ -6,7 +6,7 @@ import Register from './Pages/Register';
 import Wishlist from './Pages/retailers/wishlist';
 import Orders from './Pages/retailers/orders';
 import Messages from './Pages/Messages';
-import ScrollToTop from "./components/Scroll";
+import ScrollToTop from "./components/scroll";
 import AddProduct from './Pages/farmers/add';
 import ViewProducts from './Pages/farmers/products';
 import UpdateProduct from './Pages/farmers/update';
