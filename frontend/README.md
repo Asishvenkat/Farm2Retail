@@ -1,12 +1,158 @@
-# React + Vite
+# Frontend - Farm2Retail
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+E-commerce platform frontend for farmers and retailers to trade agricultural products.
 
-Currently, two official plugins are available:
+## 🚀 Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### For Farmers
+- Product listing with multiple images
+- Bulk pricing tier management
+- Real-time order notifications
+- Inventory tracking
+- Direct messaging with retailers
+- Order history and analytics
 
-## Expanding the ESLint configuration
+### For Retailers
+- Advanced product search & filtering
+- Shopping cart & wishlist
+- Secure checkout (Razorpay)
+- Order tracking
+- Real-time price/stock updates via WebSocket
+- Chat with farmers
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🛠️ Tech Stack
+
+- **React 18** - UI framework
+- **Redux Toolkit** - State management
+- **Redux Persist** - Persist state across sessions
+- **React Router** - Navigation
+- **MUI v5** - Material UI components
+- **Styled Components** - CSS-in-JS styling
+- **Axios** - API requests
+- **Socket.io Client** - Real-time notifications
+- **Vite** - Build tool
+- **Appwrite** - Authentication service
+- **Razorpay** - Payment gateway
+
+## 📦 Installation
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+
+# Build for production
+npm run build
+
+# Preview production build
+npm run preview
+```
+
+## 🔧 Environment Variables
+
+Create a `.env` file in the frontend directory:
+
+```env
+# Razorpay
+VITE_RAZORPAY_KEY_ID=your_razorpay_key_id
+
+# Cloudinary
+VITE_CLOUDINARY_CLOUD_NAME=your_cloud_name
+VITE_CLOUDINARY_API_KEY=your_api_key
+
+# API Configuration
+VITE_API_BASE_URL=http://localhost:5000/api/
+
+# Socket.io
+VITE_SOCKET_URL=http://localhost:5000
+```
+
+## 📁 Project Structure
+
+```
+frontend/
+├── src/
+│   ├── components/       # Reusable components
+│   ├── Pages/           # Route pages
+│   │   ├── farmers/     # Farmer-specific pages
+│   │   └── retailers/   # Retailer-specific pages
+│   ├── redux/           # State management
+│   ├── App.jsx
+│   ├── requestMethods.js
+│   └── socketService.js
+├── public/
+└── package.json
+```
+
+## 🌐 Key Routes
+
+### Public Routes
+- `/` - Home page
+- `/login` - User login
+- `/register` - User registration
+- `/products/:category` - Product listing
+- `/product/:id` - Product details
+
+### Farmer Routes
+- `/farmer` - Farmer dashboard
+- `/farmer/add` - Add new product
+- `/farmer/products` - Manage products
+- `/farmer/update/:id` - Update product
+
+### Retailer Routes
+- `/cart` - Shopping cart
+- `/wishlist` - Wishlist
+- `/orders` - Order history
+
+## 🔌 API Integration
+
+```javascript
+import { publicRequest, userRequest } from './requestMethods';
+
+// Public request (no auth required)
+const products = await publicRequest.get('/products');
+
+// Authenticated request
+const orders = await userRequest.get('/orders/find/userId');
+```
+
+## 🔔 Real-time Features
+
+Socket.io integration for:
+- Order notifications
+- Product updates
+- Price changes
+- Stock updates
+- Chat messages
+
+## 💳 Payment Integration
+
+Razorpay integration for secure payments:
+- Order creation
+- Payment verification
+- Transaction tracking
+
+## 📱 Responsive Design
+
+Fully responsive using Styled Components with mobile-first approach.
+
+## 🔐 Authentication
+
+- JWT-based authentication
+- Protected routes
+- Role-based access (Farmer/Retailer)
+- Redux persist for session management
+
+## 🚢 Deployment
+
+Ready for deployment on Vercel, Netlify, or Render.
+
+Build command: `npm run build`  
+Output directory: `dist`
+
+## 📄 License
+
+MIT
+

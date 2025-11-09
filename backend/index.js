@@ -21,19 +21,28 @@ const server = http.createServer(app);
 // Initialize Socket.io
 const io = new Server(server, {
   cors: {
-    origin: [process.env.FRONTEND_URL || "http://localhost:5173", process.env.ADMIN_URL || "http://localhost:5174"],
+    origin: [
+      "https://farm2-retail.vercel.app",
+      "http://localhost:5173",
+      "http://localhost:5174"
+    ],
     methods: ["GET", "POST"],
     credentials: true
   }
 });
 
+
 // Make io accessible to routes
 app.set('io', io);
 
 app.use(cors({
-  origin: [process.env.FRONTEND_URL || "http://localhost:5173", process.env.ADMIN_URL || "http://localhost:5174"], 
+  origin: [
+    process.env.FRONTEND_URL || "http://localhost:5173",
+    process.env.ADMIN_URL || "http://localhost:5174"
+  ],
   credentials: true
 }));
+
 
 mongoose.connect(process.env.MONGO_URL)
   .then(() => {
