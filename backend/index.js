@@ -25,9 +25,10 @@ const io = new Server(server, {
       "https://farm2retail.vercel.app",
       "https://farm2retail-admin-panel.vercel.app",
       "http://localhost:5173",
-      "http://localhost:5174"
+      "http://localhost:5174",
+      "http://localhost:3000"
     ],
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
   }
 });
@@ -41,9 +42,12 @@ app.use(cors({
     "https://farm2retail.vercel.app",
     "https://farm2retail-admin-panel.vercel.app",
     "http://localhost:5173",
-    "http://localhost:5174"
+    "http://localhost:5174",
+    "http://localhost:3000"
   ],
-  credentials: true
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "token"]
 }));
 
 

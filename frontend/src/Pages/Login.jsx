@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Eye, EyeOff, Loader2 } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../redux/apiCalls';
+import { clearError } from '../redux/userRedux';
 
 const ModernLogin = () => {
   const [username, setUsername] = useState("");
@@ -9,6 +10,18 @@ const ModernLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
   const dispatch = useDispatch();
   const { isFetching, error } = useSelector((state) => state.user);
+
+  // Clear error on component mount
+  useEffect(() => {
+    dispatch(clearError());
+  }, [dispatch]);
+
+  // Clear error when user starts typing
+  useEffect(() => {
+    if (error && (username || password)) {
+      dispatch(clearError());
+    }
+  }, [username, password, error, dispatch]);
 
   const handleLogin = (e) => {
     e.preventDefault();
