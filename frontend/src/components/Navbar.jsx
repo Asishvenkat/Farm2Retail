@@ -1,4 +1,4 @@
-import { Search, ShoppingCartOutlined, FavoriteBorder, ChatBubbleOutline } from "@material-ui/icons";
+import { Search, ShoppingCartOutlined, FavoriteBorder, ChatBubbleOutline } from "@mui/icons-material";
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 import { mobile } from "../responsive";

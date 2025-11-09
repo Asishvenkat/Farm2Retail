@@ -9,9 +9,6 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/';
-const RAZORPAY_KEY_ID = import.meta.env.VITE_RAZORPAY_KEY_ID;
-
 const Container = styled.div``;
 const Wrapper = styled.div`padding: 20px; ${mobile({ padding: "10px" })}`;
 const Title = styled.h1`font-weight: 300; text-align: center;`;
@@ -134,14 +131,14 @@ const Cart = () => {
 
   const proceedToPayment = async () => {
     try {
-      const orderUrl = `${API_BASE_URL}payment/order`;
+      const orderUrl = "http://localhost:5000/api/payment/order";
       const { data } = await axios.post(orderUrl, {
         amount: cart.total * 100,
         currency: "INR",
       });
 
       const options = {
-        key: RAZORPAY_KEY_ID,
+        key: "rzp_test_7iWVVTng1uWfu6",
         amount: data.amount,
         currency: data.currency,
         name: "E-Commerce Store",
@@ -149,7 +146,7 @@ const Cart = () => {
         order_id: data.id,
         handler: async function (response) {
           try {
-            const res = await axios.post(`${API_BASE_URL}payment/order/validate`, {
+            const res = await axios.post("http://localhost:5000/api/payment/order/validate", {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
@@ -172,7 +169,7 @@ const Cart = () => {
                   orderId: response.razorpay_order_id,
                 };
 
-                await axios.post(`${API_BASE_URL}orders`, orderData, {
+                await axios.post("http://localhost:5000/api/orders", orderData, {
                   headers: {
                     "token": currentUser.accessToken,
                     "Content-Type": "application/json"
