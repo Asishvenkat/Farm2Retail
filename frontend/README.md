@@ -1,5 +1,8 @@
 # Frontend - Farm2Retail
 
+![Frontend CI](https://github.com/YOUR_USERNAME/farm2retail/actions/workflows/frontend-ci.yml/badge.svg)
+[![codecov](https://codecov.io/gh/YOUR_USERNAME/farm2retail/branch/main/graph/badge.svg?flag=frontend)](https://codecov.io/gh/YOUR_USERNAME/farm2retail)
+
 E-commerce platform frontend for farmers and retailers to trade agricultural products.
 
 ## 🚀 Features
@@ -145,12 +148,72 @@ Fully responsive using Styled Components with mobile-first approach.
 - Role-based access (Farmer/Retailer)
 - Redux persist for session management
 
+## 🧪 Testing
+
+Run tests with coverage:
+```bash
+npm test
+```
+
+Run tests in watch mode:
+```bash
+npm test -- --watch
+```
+
+Generate coverage report:
+```bash
+npm test -- --coverage
+```
+
+### Test Coverage
+Component tests include:
+- Navbar rendering and cart badge
+- Login form interactions
+- Footer links and social media
+- User input validation
+
+## 📝 Code Quality
+
+### Linting
+```bash
+npm run lint
+```
+
+### Formatting
+```bash
+npm run format
+```
+
+### Pre-commit Hooks
+Husky runs lint-staged automatically before each commit to ensure code quality.
+
 ## 🚢 Deployment
 
 Ready for deployment on Vercel, Netlify, or Render.
 
 Build command: `npm run build`  
 Output directory: `dist`
+
+### Environment Variables
+Create a `.env` file:
+```env
+VITE_API_URL=your_backend_api_url
+VITE_SOCKET_URL=your_socket_server_url
+VITE_RAZORPAY_KEY=your_razorpay_key
+```
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+### Development Workflow
+- All commits are checked with Husky pre-commit hooks
+- CI/CD runs on GitHub Actions for all PRs
+- Tests and linting must pass before merge
 
 ## 📄 License
 

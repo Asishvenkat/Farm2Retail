@@ -1,24 +1,27 @@
-const express = require('express');
+import 'dotenv/config';
+import express from 'express';
+import http from 'http';
+import { Server } from 'socket.io';
+import mongoose from 'mongoose';
+import cors from 'cors';
+import helmet from 'helmet';
+
+// Arcjet middleware
+import { arcjetMiddleware } from './middleware/arcjet.js';
+
+// Routes (convert to ESM-compatible imports)
+import userRoute from './routes/user.js';
+import authRoute from './routes/auth.js';
+import productRoute from './routes/product.js';
+import cartRoute from './routes/cart.js';
+import orderRoute from './routes/order.js';
+import razorpayRoute from './routes/razorpay.js';
+import notificationRoute from './routes/notification.js';
+import messageRoute from './routes/message.js';
+
 const app = express();
-const http = require('http');
-const { Server } = require('socket.io');
-const mongoose = require('mongoose');
-const cors = require('cors'); 
-require('dotenv').config(); 
-
-const userRoute = require('./routes/user');
-const authRoute = require('./routes/auth');
-const productRoute = require('./routes/product');
-const cartRoute = require('./routes/cart');
-const orderRoute = require('./routes/order');
-const razorpayRoute = require('./routes/razorpay');
-const notificationRoute = require('./routes/notification');
-const messageRoute = require('./routes/message'); 
-
-// Create HTTP server
 const server = http.createServer(app);
 
-// Initialize Socket.io
 const io = new Server(server, {
   cors: {
     origin: [
@@ -36,7 +39,22 @@ const io = new Server(server, {
 // Make io accessible to routes
 app.set('io', io);
 
-// Express CORS
+// Security headers with helmet.js
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      imgSrc: ["'self'", "data:", "https://res.cloudinary.com"],
+      scriptSrc: ["'self'"],
+      connectSrc: ["'self'", "ws:", "wss:"],
+    },
+  },
+  crossOriginEmbedderPolicy: false,
+}));
+
+// Middleware
 app.use(cors({
   origin: [
     "https://farm2retail.vercel.app",
@@ -50,18 +68,17 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization", "token"]
 }));
 
-
-
-mongoose.connect(process.env.MONGO_URL)
-  .then(() => {
-    console.log("✅ MongoDB Connected");
-  })
-  .catch((err) => {
-    console.error("❌ MongoDB connection error:", err);
-  });
-
 app.use(express.json());
 
+// Arcjet protection middleware (global)
+app.use(arcjetMiddleware);
+
+// Connect MongoDB
+mongoose.connect(process.env.MONGO_URL)
+  .then(() => console.log("✅ MongoDB Connected"))
+  .catch((err) => console.error("❌ MongoDB connection error:", err));
+
+// Routes
 app.use("/api/auth", authRoute);
 app.use("/api/users", userRoute);
 app.use("/api/products", productRoute);
@@ -69,27 +86,22 @@ app.use("/api/cart", cartRoute);
 app.use("/api/orders", orderRoute);
 app.use("/api/payment", razorpayRoute);
 app.use("/api/notifications", notificationRoute);
-app.use("/api/messages", messageRoute); 
+app.use("/api/messages", messageRoute);
 
-// Socket.io connection handling
-const activeUsers = new Map(); // Store active users: userId -> socketId
+// Active users tracking
+const activeUsers = new Map();
 
 io.on('connection', (socket) => {
   console.log(`✅ User connected: ${socket.id}`);
 
-  // User joins with their ID
   socket.on('user:join', (userId) => {
     activeUsers.set(userId, socket.id);
     socket.userId = userId;
-    console.log(`👤 User ${userId} joined with socket ${socket.id}`);
-    
-    // Notify others about online status
     socket.broadcast.emit('user:online', { userId });
+    console.log(`👤 User ${userId} joined (${socket.id})`);
   });
 
-  // Handle new order notification
   socket.on('order:created', (orderData) => {
-    // Notify all admins about new order
     io.emit('notification:newOrder', {
       type: 'NEW_ORDER',
       message: `New order #${orderData.orderId} received`,
@@ -98,18 +110,15 @@ io.on('connection', (socket) => {
     });
   });
 
-  // Handle product updates
   socket.on('product:updated', (productData) => {
-    // Broadcast to all users
     io.emit('notification:productUpdate', {
       type: 'PRODUCT_UPDATE',
-      message: `Product "${productData.title}" has been updated`,
+      message: `Product "${productData.title}" updated`,
       data: productData,
       timestamp: new Date()
     });
   });
 
-  // Handle price changes
   socket.on('price:changed', (priceData) => {
     io.emit('notification:priceChange', {
       type: 'PRICE_CHANGE',
@@ -119,12 +128,10 @@ io.on('connection', (socket) => {
     });
   });
 
-  // Chat message handling
   socket.on('chat:sendMessage', (messageData) => {
     const { recipientId, message, senderId, senderName } = messageData;
-    
-    // Send to specific user if online
     const recipientSocket = activeUsers.get(recipientId);
+
     if (recipientSocket) {
       io.to(recipientSocket).emit('chat:receiveMessage', {
         senderId,
@@ -133,8 +140,7 @@ io.on('connection', (socket) => {
         timestamp: new Date()
       });
     }
-    
-    // Send confirmation to sender
+
     socket.emit('chat:messageSent', {
       success: true,
       recipientId,
@@ -142,11 +148,9 @@ io.on('connection', (socket) => {
     });
   });
 
-  // Typing indicator
   socket.on('chat:typing', (data) => {
     const { recipientId, isTyping, senderName } = data;
     const recipientSocket = activeUsers.get(recipientId);
-    
     if (recipientSocket) {
       io.to(recipientSocket).emit('chat:userTyping', {
         userId: socket.userId,
@@ -156,7 +160,6 @@ io.on('connection', (socket) => {
     }
   });
 
-  // Stock update notification
   socket.on('stock:update', (stockData) => {
     io.emit('notification:stockUpdate', {
       type: 'STOCK_UPDATE',
@@ -166,18 +169,15 @@ io.on('connection', (socket) => {
     });
   });
 
-  // Handle disconnection
   socket.on('disconnect', () => {
     if (socket.userId) {
       activeUsers.delete(socket.userId);
-      // Notify others about offline status
       socket.broadcast.emit('user:offline', { userId: socket.userId });
       console.log(`👋 User ${socket.userId} disconnected`);
     }
     console.log(`❌ Socket disconnected: ${socket.id}`);
   });
 
-  // Error handling
   socket.on('error', (error) => {
     console.error('Socket error:', error);
   });
@@ -191,9 +191,12 @@ app.get('/api/online-users', (req, res) => {
   });
 });
 
-
 const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`🔌 WebSocket server ready`);
-});
+
+// Only start server if not in test environment
+if (process.env.NODE_ENV !== 'test') {
+  server.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`🔌 WebSocket server ready`);
+  });
+}

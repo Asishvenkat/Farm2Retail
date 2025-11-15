@@ -11,6 +11,9 @@
     "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install && cd ../admin && npm install"
   },
   "dependencies": {
-    "concurrently": "^8.2.2"
+    "@arcjet/inspect": "^1.0.0-beta.15",
+    "@arcjet/node": "^1.0.0-beta.15",
+    "concurrently": "^8.2.2",
+    "helmet": "^8.1.0"
   }
 }

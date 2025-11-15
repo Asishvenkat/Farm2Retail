@@ -1,6 +1,7 @@
 import axios from "axios";
 
-export const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api/";
+export const BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api/";
 
 // Safe token extraction
 let TOKEN = null;
@@ -18,5 +19,8 @@ export const publicRequest = axios.create({
 
 export const userRequest = axios.create({
   baseURL: BASE_URL,
-  headers: TOKEN ? { token: `Bearer ${TOKEN}` } : {},
 });
+
+if (TOKEN) {
+  userRequest.defaults.headers.common["token"] = `Bearer ${TOKEN}`;
+}

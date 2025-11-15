@@ -1,6 +1,7 @@
-const Product = require("../models/Product");
-const { verifyFarmer, verifyRetailer } = require("./verifyToken");
-const router = require("express").Router();
+import Product from '../models/Product.js';
+import { verifyFarmer, verifyRetailer } from './verifyToken.js';
+import express from 'express';
+const router = express.Router();
 
 // CREATE PRODUCT (Farmers only)
 // CREATE PRODUCT (Farmers only)
@@ -144,4 +145,4 @@ router.get("/", async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

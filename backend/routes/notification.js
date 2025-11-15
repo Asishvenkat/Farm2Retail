@@ -1,6 +1,7 @@
-const router = require('express').Router();
-const Notification = require('../models/Notification');
-const { verifyToken, verifyTokenAndAuthorization } = require('./verifyToken');
+import express from 'express';
+const router = express.Router();
+import Notification from '../models/Notification.js';
+import { verifyToken, verifyTokenAndAuthorization } from './verifyToken.js';
 
 // Get user notifications
 router.get('/:userId', verifyTokenAndAuthorization, async (req, res) => {
@@ -94,4 +95,4 @@ router.delete('/:userId/clear-read', verifyTokenAndAuthorization, async (req, re
   }
 });
 
-module.exports = router;
+export default router;

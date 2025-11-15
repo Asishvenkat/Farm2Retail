@@ -1,7 +1,8 @@
-const router = require('express').Router();
-const Message = require('../models/Message');
-const Notification = require('../models/Notification');
-const { verifyToken, verifyTokenAndAuthorization } = require('./verifyToken');
+import express from 'express';
+const router = express.Router();
+import Message from '../models/Message.js';
+import Notification from '../models/Notification.js';
+import { verifyToken, verifyTokenAndAuthorization } from './verifyToken.js';
 
 // Get conversation between two users
 router.get('/conversation/:userId/:otherUserId', verifyToken, async (req, res) => {
@@ -186,4 +187,4 @@ router.delete('/:id', verifyToken, async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

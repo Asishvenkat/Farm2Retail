@@ -1,8 +1,8 @@
-const {verify} = require("jsonwebtoken");
-const {verifyToken, verifyTokenAndAuthorization,verifyTokenAndAdmin} = require("./verifyToken");
-const CryptoJS = require("crypto-js");
-const router = require('express').Router();
-const User = require("../models/User");
+import { verifyToken, verifyTokenAndAuthorization, verifyTokenAndAdmin } from './verifyToken.js';
+import CryptoJS from 'crypto-js';
+import express from 'express';
+const router = express.Router();
+import User from '../models/User.js';
 
 router.put("/:id",verifyTokenAndAuthorization,async (req,res)=>{
     console.log("Updating user:", req.body);
@@ -86,4 +86,4 @@ router.get("/stats", async (req, res) => {
 
 
 
-module.exports = router;
+export default router;

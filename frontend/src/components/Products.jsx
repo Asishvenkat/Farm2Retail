@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { mobile } from "../responsive";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/';
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
 // Container for all product cards
 const Container = styled.div`
@@ -70,9 +70,9 @@ const Price = styled.p`
 const Product = ({ item }) => (
   <ProductCard>
     <Link to={`/product/${item._id}`} style={{ textDecoration: "none", color: "inherit" }}>
-      <Image src={item.img} alt={item.title} />
+      <Image src={item.images?.[0] || item.img} alt={item.name || item.title} />
       <Info>
-        <Title>{item.title}</Title>
+        <Title>{item.name || item.title}</Title>
         <Price>₹{item.price}</Price>
       </Info>
     </Link>

@@ -5,6 +5,9 @@ A modern full-stack platform connecting farmers directly with retailers, elimina
 ![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Node](https://img.shields.io/badge/node-%3E%3D16.0.0-brightgreen)
 ![React](https://img.shields.io/badge/react-19.1.0-blue)
+![Backend CI](https://github.com/YOUR_USERNAME/farm2retail/actions/workflows/backend-ci.yml/badge.svg)
+![Frontend CI](https://github.com/YOUR_USERNAME/farm2retail/actions/workflows/frontend-ci.yml/badge.svg)
+[![codecov](https://codecov.io/gh/YOUR_USERNAME/farm2retail/branch/main/graph/badge.svg)](https://codecov.io/gh/YOUR_USERNAME/farm2retail)
 
 ---
 
@@ -13,6 +16,10 @@ A modern full-stack platform connecting farmers directly with retailers, elimina
 - [Overview](#overview)
 - [Features](#features)
 - [Tech Stack](#tech-stack)
+- [Security](#security)
+- [Testing](#testing)
+- [Code Quality](#code-quality)
+- [CI/CD](#cicd)
 - [Project Structure](#project-structure)
 - [Getting Started](#getting-started)
 - [Environment Setup](#environment-setup)
@@ -87,6 +94,151 @@ A modern full-stack platform connecting farmers directly with retailers, elimina
 - JWT - Authentication
 - Razorpay - Payment gateway
 - Cloudinary - Image storage
+- **Arcjet** - Security & Bot Protection
+- **Helmet.js** - Security Headers
+
+### Testing & Quality
+- **Jest** - Testing framework
+- **Supertest** - API testing
+- **React Testing Library** - Component testing
+- **ESLint** - Code linting
+- **Prettier** - Code formatting
+- **Husky** - Git hooks
+- **lint-staged** - Pre-commit checks
+
+### DevOps
+- **GitHub Actions** - CI/CD
+- **Vercel** - Frontend deployment
+- **Render/Railway** - Backend deployment (suggested)
+
+---
+
+## 🛡️ Security
+
+### Security Features (Arcjet)
+
+Farm2Market implements comprehensive security measures using Arcjet:
+
+#### Bot Detection & Protection
+- **Bot Detection**: Blocks malicious bots while allowing legitimate search engines
+- **Spoofed Bot Verification**: Advanced verification using IP data to detect fake bots
+- **Hosting IP Blocking**: Prevents requests from hosting providers (likely bots)
+
+#### Rate Limiting
+- **Global Protection**: Token bucket rate limiting (5 refill/10s, capacity 10)
+- **Auth Endpoints**: 5 requests per 15 minutes for login/register
+- **Payment Endpoints**: 10 requests per hour for payment operations
+
+#### Security Headers (Helmet.js)
+- Content Security Policy (CSP)
+- HTTP Strict Transport Security (HSTS)
+- X-Frame-Options, X-Content-Type-Options
+- Cross-Origin policies
+
+#### SQL Injection & XSS Defense
+- Shield protection against common web attacks
+- Real-time request analysis and blocking
+
+---
+
+## 🧪 Testing
+
+### Backend Tests
+Run backend tests with coverage:
+```bash
+cd backend
+npm test                    # Run all tests
+npm test -- --coverage      # With coverage report
+npm test -- --watch         # Watch mode
+```
+
+**Test Coverage Target:** 60% across all metrics (branches, functions, lines, statements)
+
+**Current Test Suite:**
+- Authentication endpoints (5 tests)
+- Product CRUD operations (5 tests)
+- Order management (4 tests)
+- User administration (3 tests)
+
+### Frontend Tests
+Run frontend component tests:
+```bash
+cd frontend
+npm test                    # Run all tests
+npm test -- --coverage      # With coverage report
+npm test -- --watch         # Watch mode
+```
+
+**Current Test Suite:**
+- Navbar component rendering (2 tests)
+- Login form interactions (3 tests)
+- Footer component (2 tests)
+
+---
+
+## 📝 Code Quality
+
+### Linting
+```bash
+# Backend
+cd backend && npm run lint
+
+# Frontend
+cd frontend && npm run lint
+```
+
+### Formatting
+```bash
+# Backend
+cd backend && npm run format
+
+# Frontend
+cd frontend && npm run format
+```
+
+### Pre-commit Hooks
+Husky automatically runs before each commit:
+- ✅ ESLint with auto-fix on staged files
+- ✅ Prettier formatting on staged files
+- ✅ Prevents commits with linting errors
+
+Configuration files:
+- `.husky/pre-commit` - Husky hook
+- `lint-staged` in package.json - Staged files configuration
+- `eslint.config.js` - ESLint rules
+- `.prettierrc` - Prettier configuration
+
+---
+
+## 🔄 CI/CD
+
+GitHub Actions workflows automatically run on push and pull requests:
+
+### Backend CI (`backend-ci.yml`)
+Runs on changes to `backend/**`:
+- ✅ **Linting**: ESLint checks
+- ✅ **Formatting**: Prettier validation
+- ✅ **Testing**: Jest tests with coverage
+- ✅ **Build**: Verify server can start
+- 📊 **Coverage**: Upload to Codecov
+- 🔄 **Matrix**: Test on Node.js 18.x and 20.x
+
+### Frontend CI (`frontend-ci.yml`)
+Runs on changes to `frontend/**`:
+- ✅ **Linting**: ESLint checks
+- ✅ **Formatting**: Prettier validation
+- ✅ **Testing**: Jest + React Testing Library
+- ✅ **Build**: Vite production build
+- 📦 **Artifacts**: Upload build output
+- 📊 **Coverage**: Upload to Codecov
+- 🔄 **Matrix**: Test on Node.js 18.x and 20.x
+
+### CI/CD Best Practices
+- All PRs must pass CI checks
+- Coverage reports uploaded to Codecov
+- Build artifacts retained for 7 days
+- Separate workflows for frontend/backend
+- Matrix testing ensures compatibility
 
 ---
 
@@ -405,6 +557,33 @@ const handleUpload = async (files) => {
 ```
 
 ---
+
+## Security
+
+### Arcjet Security Implementation
+Farm2Market implements comprehensive security using Arcjet, providing advanced protection against common web threats and abuse.
+
+#### Features Implemented:
+- **Shield Protection**: SQL injection, XSS defense, and other common attacks
+- **Bot Detection**: Blocks malicious bots while allowing legitimate search engines
+- **Rate Limiting**:
+  - Global: 50 tokens per 10 seconds (general protection)
+  - Auth endpoints: 5 requests per 15 minutes (login/signup)
+  - Payment endpoints: 10 requests per hour
+- **IP-based Protection**:
+  - Hosting IP detection and blocking
+  - Spoofed bot verification
+- **Security Headers**: Helmet.js implementation with CSP, HSTS, and other headers
+
+#### Rate Limits:
+- **Login/Signup**: 5 attempts per 15 minutes per IP
+- **Payments**: 10 requests per hour per IP
+- **General API**: 50 requests per 10 seconds per IP
+
+#### Bot Protection:
+- Blocks all bots except search engines (Google, Bing, etc.)
+- Detects and blocks spoofed bots
+- Hosting IP blocking for API endpoints
 
 ## Contributing
 

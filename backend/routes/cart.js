@@ -1,8 +1,9 @@
-const Cart = require("../models/Cart");
-const {verifyToken, verifyTokenAndAuthorization,verifyTokenAndAdmin} = require("./verifyToken");
-const CryptoJS = require("crypto-js");
-const router = require('express').Router();
-const User = require("../models/User");
+import Cart from '../models/Cart.js';
+import { verifyToken, verifyTokenAndAuthorization, verifyTokenAndAdmin } from './verifyToken.js';
+import CryptoJS from 'crypto-js';
+import express from 'express';
+const router = express.Router();
+import User from '../models/User.js';
 
 //create
 router.post("/",verifyToken, async (req, res) => {
@@ -42,8 +43,8 @@ router.delete("/:id",verifyTokenAndAuthorization,async (req,res)=>{
 //Get user Cart
 router.get("/find/:userId",verifyTokenAndAuthorization,async (req,res)=>{
     try{
-        const Cart=await Cart.findOne({userId:req.params.userId});
-        res.status(200).json(Cart);
+        const cart = await Cart.findOne({ userId: req.params.userId });
+        res.status(200).json(cart);
     }catch(err){
         res.status(500).json(err);
     }
@@ -60,4 +61,4 @@ router.get("/",verifyTokenAndAdmin,async (req,res)=>{
     }
 })
 
-module.exports = router;
+export default router;

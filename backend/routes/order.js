@@ -1,9 +1,11 @@
-const Order =require("../models/Order");
-const {verifyToken, verifyTokenAndAuthorization,verifyTokenAndAdmin} = require("./verifyToken");
-const Notification = require("../models/Notification");
-const Product = require("../models/Product");
+import Order from '../models/Order.js';
+import { verifyToken, verifyTokenAndAuthorization, verifyTokenAndAdmin } from './verifyToken.js';
+import Notification from '../models/Notification.js';
+import Product from '../models/Product.js';
+import User from '../models/User.js';
 
-const router = require('express').Router();
+import express from 'express';
+const router = express.Router();
 
 //create
 router.post("/", async (req, res) => {
@@ -168,9 +170,7 @@ router.get("/find/:userId",verifyTokenAndAuthorization,async (req,res)=>{
 //Get farmer orders with populated product and user details
 router.get("/farmer/:farmerId", async (req, res) => {
     try {
-        const Product = require("../models/Product");
-        const User = require("../models/User");
-        
+                
         console.log('Fetching orders for farmer ID:', req.params.farmerId);
         
         // Get all orders
@@ -307,4 +307,4 @@ router.get("/",async (req,res)=>{
     }
 })
 
-module.exports = router;
+export default router;
