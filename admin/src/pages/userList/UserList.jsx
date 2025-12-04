@@ -41,7 +41,6 @@ export default function UserList() {
         disableRowSelectionOnClick
         columns={columns}
         pageSize={8}
-     
         autoHeight
       />
     </div>

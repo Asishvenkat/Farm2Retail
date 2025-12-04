@@ -1,5 +1,9 @@
 import Order from '../models/Order.js';
-import { verifyToken, verifyTokenAndAuthorization, verifyTokenAndAdmin } from './verifyToken.js';
+import {
+  verifyToken,
+  verifyTokenAndAuthorization,
+  verifyTokenAndAdmin,
+} from './verifyToken.js';
 import Notification from '../models/Notification.js';
 import Product from '../models/Product.js';
 import User from '../models/User.js';
@@ -40,7 +44,7 @@ router.post('/', async (req, res) => {
           title: 'New Order Received! 🎉',
           message: `You have received a new order. Order ID: ${savedOrder._id.toString().slice(-6)}`,
           link: '/farmer/orders',
-          read: false
+          read: false,
         });
         await notification.save();
 
@@ -55,8 +59,8 @@ router.post('/', async (req, res) => {
               title: notification.title,
               message: notification.message,
               link: notification.link,
-              createdAt: notification.createdAt
-            }
+              createdAt: notification.createdAt,
+            },
           });
         }
       } catch (err) {
@@ -69,11 +73,10 @@ router.post('/', async (req, res) => {
     console.error('Order save error:', err);
     res.status(500).json({
       error: err.message,
-      details: err.errors || err
+      details: err.errors || err,
     });
   }
 });
-
 
 //Update - Send notification to retailer when delivery status changes
 router.put('/:id', verifyTokenAndAdmin, async (req, res) => {
@@ -83,7 +86,7 @@ router.put('/:id', verifyTokenAndAdmin, async (req, res) => {
     const updatedOrder = await Order.findOneAndUpdate(
       { _id: req.params.id },
       { $set: req.body },
-      { new: true }
+      { new: true },
     );
 
     // Check if status changed and notify retailer
@@ -117,7 +120,7 @@ router.put('/:id', verifyTokenAndAdmin, async (req, res) => {
           title: `${statusEmoji} Order Status Updated`,
           message: `${statusMessage} Order ID: ${updatedOrder._id.toString().slice(-6)}`,
           link: '/orders',
-          read: false
+          read: false,
         });
         await notification.save();
 
@@ -132,8 +135,8 @@ router.put('/:id', verifyTokenAndAdmin, async (req, res) => {
               title: notification.title,
               message: notification.message,
               link: notification.link,
-              createdAt: notification.createdAt
-            }
+              createdAt: notification.createdAt,
+            },
           });
         }
       } catch (err) {
@@ -148,7 +151,7 @@ router.put('/:id', verifyTokenAndAdmin, async (req, res) => {
 });
 
 //delete
-router.delete('/:id',verifyTokenAndAdmin,async (req,res) => {
+router.delete('/:id', verifyTokenAndAdmin, async (req, res) => {
   try {
     await Order.findByIdAndDelete(req.params.id);
     res.status(200).json('Order has been deleted...');
@@ -158,9 +161,9 @@ router.delete('/:id',verifyTokenAndAdmin,async (req,res) => {
 });
 
 //Get user Orders
-router.get('/find/:userId',verifyTokenAndAuthorization,async (req,res) => {
+router.get('/find/:userId', verifyTokenAndAuthorization, async (req, res) => {
   try {
-    const orders=await Order.find({ userId:req.params.userId });
+    const orders = await Order.find({ userId: req.params.userId });
     res.status(200).json(orders);
   } catch (err) {
     res.status(500).json(err);
@@ -170,7 +173,6 @@ router.get('/find/:userId',verifyTokenAndAuthorization,async (req,res) => {
 //Get farmer orders with populated product and user details
 router.get('/farmer/:farmerId', async (req, res) => {
   try {
-
     console.log('Fetching orders for farmer ID:', req.params.farmerId);
 
     // Get all orders
@@ -189,7 +191,14 @@ router.get('/farmer/:farmerId', async (req, res) => {
         try {
           const product = await Product.findById(item.productId);
           if (product) {
-            console.log('Product found:', product.name, 'Farmer ID:', product.farmerId, 'Match:', product.farmerId === req.params.farmerId);
+            console.log(
+              'Product found:',
+              product.name,
+              'Farmer ID:',
+              product.farmerId,
+              'Match:',
+              product.farmerId === req.params.farmerId,
+            );
 
             // Check if this product belongs to the farmer
             if (product.farmerId === req.params.farmerId) {
@@ -206,8 +215,8 @@ router.get('/farmer/:farmerId', async (req, res) => {
                 farmerId: product.farmerId,
                 farmerName: product.farmerName,
                 category: product.category,
-                images: product.images
-              }
+                images: product.images,
+              },
             });
           } else {
             console.log('Product not found for ID:', item.productId);
@@ -225,19 +234,21 @@ router.get('/farmer/:farmerId', async (req, res) => {
           farmerOrders.push({
             ...order,
             products: populatedProducts,
-            customer: customer ? {
-              _id: customer._id,
-              username: customer.username,
-              email: customer.email,
-              phone: customer.phone
-            } : null
+            customer: customer
+              ? {
+                _id: customer._id,
+                username: customer.username,
+                email: customer.email,
+                phone: customer.phone,
+              }
+              : null,
           });
         } catch (err) {
           console.error('Error populating customer:', err);
           farmerOrders.push({
             ...order,
             products: populatedProducts,
-            customer: null
+            customer: null,
           });
         }
       }
@@ -262,10 +273,10 @@ router.get('/income', async (req, res) => {
       {
         $group: {
           _id: { $month: '$createdAt' },
-          total: { $sum: '$amount' }
-        }
+          total: { $sum: '$amount' },
+        },
       },
-      { $sort: { _id: 1 } }
+      { $sort: { _id: 1 } },
     ]);
 
     res.json(income);
@@ -285,10 +296,10 @@ router.get('/sales', async (req, res) => {
       {
         $group: {
           _id: { $month: '$createdAt' },
-          count: { $sum: 1 }
-        }
+          count: { $sum: 1 },
+        },
       },
-      { $sort: { _id: 1 } }
+      { $sort: { _id: 1 } },
     ]);
 
     res.json(sales);
@@ -298,7 +309,7 @@ router.get('/sales', async (req, res) => {
 });
 
 //Get all
-router.get('/',async (req,res) => {
+router.get('/', async (req, res) => {
   try {
     const orders = await Order.find();
     res.status(200).json(orders);

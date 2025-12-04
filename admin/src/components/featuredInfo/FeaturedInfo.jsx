@@ -15,7 +15,7 @@ export default function FeaturedInfo() {
       try {
         const [incomeRes, salesRes] = await Promise.all([
           userRequest.get("orders/income"),
-          userRequest.get("orders/sales")
+          userRequest.get("orders/sales"),
         ]);
 
         const incomeData = incomeRes.data;
@@ -29,12 +29,16 @@ export default function FeaturedInfo() {
           const [prev, current] = data;
           const prevVal = prev[key] || 0;
           const currentVal = current[key] || 0;
-          return prevVal > 0 ? ((currentVal - prevVal) / prevVal) * 100 : (currentVal > 0 ? 100 : 0);
+          return prevVal > 0
+            ? ((currentVal - prevVal) / prevVal) * 100
+            : currentVal > 0
+              ? 100
+              : 0;
         };
 
         setPercentages({
-          income: calcPercentage(incomeData, 'total'),
-          sales: calcPercentage(salesData, 'count')
+          income: calcPercentage(incomeData, "total"),
+          sales: calcPercentage(salesData, "count"),
         });
       } catch (err) {
         setError(err.message);
@@ -46,8 +50,22 @@ export default function FeaturedInfo() {
     fetchData();
   }, []);
 
-  if (loading) return <div className="featured"><div className="featuredItem"><span className="featuredTitle">Loading...</span></div></div>;
-  if (error) return <div className="featured"><div className="featuredItem"><span className="featuredTitle">Error: {error}</span></div></div>;
+  if (loading)
+    return (
+      <div className="featured">
+        <div className="featuredItem">
+          <span className="featuredTitle">Loading...</span>
+        </div>
+      </div>
+    );
+  if (error)
+    return (
+      <div className="featured">
+        <div className="featuredItem">
+          <span className="featuredTitle">Error: {error}</span>
+        </div>
+      </div>
+    );
 
   const currentIncome = data.income[data.income.length - 1];
   const currentSales = data.sales[data.sales.length - 1];
@@ -55,10 +73,11 @@ export default function FeaturedInfo() {
   const PercentageDisplay = ({ value }) => (
     <span className="featuredMoneyRate">
       %{Math.floor(Math.abs(value))}
-      {value < 0 ? 
-        <ArrowDownwardIcon className="featuredIcon negative" /> : 
+      {value < 0 ? (
+        <ArrowDownwardIcon className="featuredIcon negative" />
+      ) : (
         <ArrowUpwardIcon className="featuredIcon" />
-      }
+      )}
     </span>
   );
 
@@ -76,7 +95,9 @@ export default function FeaturedInfo() {
       <div className="featuredItem">
         <span className="featuredTitle">Sales</span>
         <div className="featuredMoneyContainer">
-          <span className="featuredMoney">{currentSales?.count || 0} Orders</span>
+          <span className="featuredMoney">
+            {currentSales?.count || 0} Orders
+          </span>
           <PercentageDisplay value={percentages.sales} />
         </div>
         <span className="featuredSub">Compared to last month</span>

@@ -20,18 +20,18 @@ describe('Order API Tests', () => {
         userId: '123',
         products: [{ productId: '1', quantity: 2 }],
         amount: 200,
-        address: 'Test Address'
+        address: 'Test Address',
       };
 
       const mockSavedOrder = {
         ...mockOrderData,
         _id: { toString: () => 'mock_order_id' },
-        products: [{ productId: '1', quantity: 2 }]
+        products: [{ productId: '1', quantity: 2 }],
       };
 
       Order.mockImplementation(() => ({
         ...mockOrderData,
-        save: jest.fn().mockResolvedValue(mockSavedOrder)
+        save: jest.fn().mockResolvedValue(mockSavedOrder),
       }));
 
       const response = await request(app)
@@ -46,7 +46,7 @@ describe('Order API Tests', () => {
     test('should get orders by user ID', async () => {
       const mockOrders = [
         { _id: '1', userId: '123', amount: 200 },
-        { _id: '2', userId: '123', amount: 300 }
+        { _id: '2', userId: '123', amount: 300 },
       ];
 
       Order.find = jest.fn().mockResolvedValue(mockOrders);
@@ -62,7 +62,9 @@ describe('Order API Tests', () => {
       const mockOrder = { _id: '123', status: 'delivered' };
 
       Order.findOneAndUpdate = jest.fn().mockResolvedValue(mockOrder);
-      Order.findById = jest.fn().mockResolvedValue({ userId: '123', status: 'pending' });
+      Order.findById = jest
+        .fn()
+        .mockResolvedValue({ userId: '123', status: 'pending' });
 
       const response = await request(app)
         .put('/api/orders/123')

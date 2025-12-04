@@ -6,7 +6,7 @@ import {
   Pinterest,
   Room,
   Twitter,
-} from "@mui/icons-material";
+} from '@mui/icons-material';
 
 const Footer = () => {
   return (
@@ -47,10 +47,26 @@ const Footer = () => {
           <div>
             <h3 className="font-semibold mb-4">Platform</h3>
             <ul className="space-y-2 text-gray-400">
-              <li><a href="#" className="hover:text-white transition-colors">Home</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Cart</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Farmer Products</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Retailer Offers</a></li>
+              <li>
+                <a href="#" className="hover:text-white transition-colors">
+                  Home
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-white transition-colors">
+                  Cart
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-white transition-colors">
+                  Farmer Products
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-white transition-colors">
+                  Retailer Offers
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -58,10 +74,26 @@ const Footer = () => {
           <div>
             <h3 className="font-semibold mb-4">Support</h3>
             <ul className="space-y-2 text-gray-400">
-              <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Contact Us</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">FAQ</a></li>
-              <li><a href="#" className="hover:text-white transition-colors">Order Tracking</a></li>
+              <li>
+                <a href="#" className="hover:text-white transition-colors">
+                  Help Center
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-white transition-colors">
+                  Contact Us
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-white transition-colors">
+                  FAQ
+                </a>
+              </li>
+              <li>
+                <a href="#" className="hover:text-white transition-colors">
+                  Order Tracking
+                </a>
+              </li>
             </ul>
           </div>
 
@@ -70,15 +102,15 @@ const Footer = () => {
             <h3 className="font-semibold mb-4">Contact</h3>
             <ul className="space-y-4 text-gray-400 text-sm">
               <li className="flex items-center">
-                <Room style={{ marginRight: "10px" }} />
+                <Room style={{ marginRight: '10px' }} />
                 8-57-5, Tagarapuvalasa, Visakhapatnam, AP - 531162
               </li>
               <li className="flex items-center">
-                <Phone style={{ marginRight: "10px" }} />
+                <Phone style={{ marginRight: '10px' }} />
                 +91 9133229547
               </li>
               <li className="flex items-center">
-                <MailOutline style={{ marginRight: "10px" }} />
+                <MailOutline style={{ marginRight: '10px' }} />
                 contact@AgroTrade.com
               </li>
               <li>

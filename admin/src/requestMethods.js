@@ -1,6 +1,7 @@
 import axios from "axios";
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api/";
+const BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api/";
 
 const getToken = () => {
   try {
@@ -21,7 +22,7 @@ export const userRequest = axios.create({
   baseURL: BASE_URL,
 });
 
-userRequest.interceptors.request.use(config => {
+userRequest.interceptors.request.use((config) => {
   const token = getToken();
   if (token) config.headers.token = `Bearer ${token}`;
   return config;

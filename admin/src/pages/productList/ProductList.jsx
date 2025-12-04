@@ -14,7 +14,7 @@ export default function ProductList() {
     getProducts(dispatch);
   }, [dispatch]);
 
-  const handleDelete = (id) => {
+  const _handleDelete = (id) => {
     deleteProduct(id, dispatch);
   };
 
@@ -29,7 +29,11 @@ export default function ProductList() {
           <div className="productListItem">
             <img
               className="productListImg"
-              src={params.row.images && params.row.images[0] ? params.row.images[0] : '/default-product.jpg'}
+              src={
+                params.row.images && params.row.images[0]
+                  ? params.row.images[0]
+                  : "/default-product.jpg"
+              }
               alt=""
             />
             {params.row.name}
@@ -38,12 +42,12 @@ export default function ProductList() {
       },
     },
     {
-       field: "quantity",
-       headerName: "Stock",
-       width: 200,
+      field: "quantity",
+      headerName: "Stock",
+      width: 200,
       renderCell: (params) => {
         return `${params.row.quantity} ${params.row.unit}`;
-      }
+      },
     },
     {
       field: "price",
@@ -51,13 +55,13 @@ export default function ProductList() {
       width: 160,
       renderCell: (params) => {
         return `₹${params.row.price}/${params.row.unit}`;
-      }
-    }
+      },
+    },
   ];
 
   // Add some debugging
-  console.log('Products from Redux:', products);
-  console.log('Products length:', products?.length);
+  console.log("Products from Redux:", products);
+  console.log("Products length:", products?.length);
 
   return (
     <div className="productList">

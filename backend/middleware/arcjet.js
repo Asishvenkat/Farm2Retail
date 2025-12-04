@@ -16,12 +16,12 @@ if (ARCJET_KEY) {
         mode: 'LIVE', // Blocks requests. Use "DRY_RUN" to log only
         // Block all bots except the following
         allow: [
-          'CATEGORY:SEARCH_ENGINE' // Google, Bing, etc
+          'CATEGORY:SEARCH_ENGINE', // Google, Bing, etc
           // Uncomment to allow these other common bot categories
           // See the full list at https://arcjet.com/bot-list
           //"CATEGORY:MONITOR", // Uptime monitoring services
           //"CATEGORY:PREVIEW", // Link previews e.g. Slack, Discord
-        ]
+        ],
       }),
       // Create a token bucket rate limit. Other algorithms are supported.
       tokenBucket({
@@ -31,13 +31,13 @@ if (ARCJET_KEY) {
         //characteristics: ["ip.src"],
         refillRate: 5, // Refill 5 tokens per interval
         interval: 10, // Refill every 10 seconds
-        capacity: 10 // Bucket capacity of 10 tokens
-      })
-    ]
+        capacity: 10, // Bucket capacity of 10 tokens
+      }),
+    ],
   });
 } else {
   console.warn(
-    'Arcjet key is missing. Set ARCJET_KEY in your environment to enable Arcjet protection.'
+    'Arcjet key is missing. Set ARCJET_KEY in your environment to enable Arcjet protection.',
   );
 }
 
@@ -106,14 +106,16 @@ export const authRateLimit = async (req, res, next) => {
           mode: 'LIVE',
           refillRate: 5, // 5 tokens
           interval: 15 * 60, // per 15 minutes (900 seconds)
-          capacity: 5 // max 5 requests
-        })
-      ]
+          capacity: 5, // max 5 requests
+        }),
+      ],
     });
 
     if (decision.isDenied()) {
       if (decision.reason.isRateLimit()) {
-        return res.status(429).json({ error: 'Too many authentication attempts. Please try again later.' });
+        return res.status(429).json({
+          error: 'Too many authentication attempts. Please try again later.',
+        });
       }
     }
 
@@ -138,14 +140,16 @@ export const paymentRateLimit = async (req, res, next) => {
           mode: 'LIVE',
           refillRate: 10, // 10 tokens
           interval: 60 * 60, // per hour (3600 seconds)
-          capacity: 10 // max 10 requests
-        })
-      ]
+          capacity: 10, // max 10 requests
+        }),
+      ],
     });
 
     if (decision.isDenied()) {
       if (decision.reason.isRateLimit()) {
-        return res.status(429).json({ error: 'Too many payment requests. Please try again later.' });
+        return res.status(429).json({
+          error: 'Too many payment requests. Please try again later.',
+        });
       }
     }
 

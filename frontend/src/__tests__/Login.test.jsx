@@ -9,16 +9,16 @@ import userReducer from '../redux/userRedux';
 const createMockStore = (initialState = {}) => {
   return configureStore({
     reducer: {
-      user: userReducer
+      user: userReducer,
     },
-    preloadedState: initialState
+    preloadedState: initialState,
   });
 };
 
 describe('Login Component', () => {
   test('renders login form', () => {
     const store = createMockStore({
-      user: { currentUser: null, isFetching: false, error: false }
+      user: { currentUser: null, isFetching: false, error: false },
     });
 
     render(
@@ -29,13 +29,15 @@ describe('Login Component', () => {
       </Provider>
     );
 
-    expect(screen.getByPlaceholderText(/username/i) || document.body).toBeTruthy();
+    expect(
+      screen.getByPlaceholderText(/username/i) || document.body
+    ).toBeTruthy();
   });
 
   test('allows user to type username and password', async () => {
     const user = userEvent.setup();
     const store = createMockStore({
-      user: { currentUser: null, isFetching: false, error: false }
+      user: { currentUser: null, isFetching: false, error: false },
     });
 
     render(
@@ -46,8 +48,12 @@ describe('Login Component', () => {
       </Provider>
     );
 
-    const usernameInput = screen.getByPlaceholderText(/username/i) || document.createElement('input');
-    const passwordInput = screen.getByPlaceholderText(/password/i) || document.createElement('input');
+    const usernameInput =
+      screen.getByPlaceholderText(/username/i) ||
+      document.createElement('input');
+    const passwordInput =
+      screen.getByPlaceholderText(/password/i) ||
+      document.createElement('input');
 
     await user.type(usernameInput, 'testuser');
     await user.type(passwordInput, 'password123');
@@ -57,7 +63,7 @@ describe('Login Component', () => {
 
   test('shows error message on login failure', () => {
     const store = createMockStore({
-      user: { currentUser: null, isFetching: false, error: true }
+      user: { currentUser: null, isFetching: false, error: true },
     });
 
     render(

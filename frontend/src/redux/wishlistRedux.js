@@ -1,5 +1,5 @@
 // redux/wishlistRedux.js
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 
 // Load wishlist from localStorage on app start
 const loadWishlistFromStorage = () => {
@@ -27,7 +27,7 @@ const saveWishlistToStorage = (state) => {
 };
 
 const wishlistSlice = createSlice({
-  name: "wishlist",
+  name: 'wishlist',
   initialState: loadWishlistFromStorage(),
   reducers: {
     addToWishlist: (state, action) => {
@@ -35,7 +35,7 @@ const wishlistSlice = createSlice({
       const existingItem = state.products.find(
         (product) => product._id === item._id
       );
-      
+
       if (!existingItem) {
         state.products.push(item);
         state.quantity += 1;
@@ -48,7 +48,7 @@ const wishlistSlice = createSlice({
       const itemIndex = state.products.findIndex(
         (product) => product._id === productId
       );
-      
+
       if (itemIndex !== -1) {
         state.products.splice(itemIndex, 1);
         state.quantity -= 1;
@@ -65,5 +65,6 @@ const wishlistSlice = createSlice({
   },
 });
 
-export const { addToWishlist, removeFromWishlist, clearWishlist } = wishlistSlice.actions;
+export const { addToWishlist, removeFromWishlist, clearWishlist } =
+  wishlistSlice.actions;
 export default wishlistSlice.reducer;

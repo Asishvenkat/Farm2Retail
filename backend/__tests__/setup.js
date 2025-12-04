@@ -13,13 +13,13 @@ const mockSchema = jest.fn().mockImplementation((definition) => ({
   statics: {},
   index: jest.fn(),
   Types: {
-    ObjectId: jest.fn().mockImplementation(() => 'mock_object_id')
+    ObjectId: jest.fn().mockImplementation(() => 'mock_object_id'),
   },
-  ...definition
+  ...definition,
 }));
 
 mockSchema.Types = {
-  ObjectId: jest.fn().mockImplementation(() => 'mock_object_id')
+  ObjectId: jest.fn().mockImplementation(() => 'mock_object_id'),
 };
 
 jest.mock('mongoose', () => ({
@@ -27,14 +27,14 @@ jest.mock('mongoose', () => ({
   connection: {
     readyState: 1,
     on: jest.fn(),
-    once: jest.fn()
+    once: jest.fn(),
   },
   Schema: mockSchema,
   Types: {
-    ObjectId: jest.fn().mockImplementation(() => 'mock_object_id')
+    ObjectId: jest.fn().mockImplementation(() => 'mock_object_id'),
   },
   model: jest.fn().mockImplementation((_name, _schema) => {
-    const Model = function(data) {
+    const Model = function (data) {
       Object.assign(this, data);
       this.save = jest.fn().mockResolvedValue(this);
       this._id = { toString: () => 'mock_id_' + Math.random() };
@@ -47,7 +47,7 @@ jest.mock('mongoose', () => ({
         limit: jest.fn().mockReturnThis(),
         skip: jest.fn().mockReturnThis(),
         populate: jest.fn().mockReturnThis(),
-        exec: jest.fn().mockResolvedValue(result)
+        exec: jest.fn().mockResolvedValue(result),
       };
       // Make the query then-able
       query.then = (resolve) => Promise.resolve(result).then(resolve);
@@ -60,27 +60,27 @@ jest.mock('mongoose', () => ({
     Model.findByIdAndDelete = jest.fn().mockResolvedValue({});
     Model.findOne = jest.fn().mockResolvedValue(null);
     return Model;
-  })
+  }),
 }));
 
 // Mock socket.io
 jest.mock('socket.io', () => ({
   Server: jest.fn().mockImplementation(() => ({
     on: jest.fn(),
-    emit: jest.fn()
-  }))
+    emit: jest.fn(),
+  })),
 }));
 
 // Mock arcjet middleware
 jest.mock('../middleware/arcjet.js', () => ({
   arcjetMiddleware: jest.fn((req, res, next) => next()),
-  authRateLimit: jest.fn((req, res, next) => next())
+  authRateLimit: jest.fn((req, res, next) => next()),
 }));
 
 // Mock jsonwebtoken
 jest.mock('jsonwebtoken', () => ({
   sign: jest.fn().mockReturnValue('mock_jwt_token'),
-  verify: jest.fn().mockReturnValue({ id: 'mock_user_id' })
+  verify: jest.fn().mockReturnValue({ id: 'mock_user_id' }),
 }));
 
 // Mock razorpay
@@ -90,14 +90,14 @@ jest.mock('razorpay', () => {
       create: jest.fn().mockResolvedValue({
         id: 'order_mock_id',
         amount: 1000,
-        currency: 'INR'
-      })
+        currency: 'INR',
+      }),
     },
     payments: {
       fetch: jest.fn().mockResolvedValue({
         status: 'captured',
-        amount: 1000
-      })
-    }
+        amount: 1000,
+      }),
+    },
   }));
 });

@@ -1,9 +1,9 @@
-import { ArrowLeftOutlined, ArrowRightOutlined } from "@material-ui/icons";
-import { useState } from "react";
-import styled from "styled-components";
-import { sliderItems } from "../data";
-import { mobile } from "../responsive";
-import { useNavigate } from "react-router-dom"; // ✅ Import
+import { ArrowLeftOutlined, ArrowRightOutlined } from '@material-ui/icons';
+import { useState } from 'react';
+import styled from 'styled-components';
+import { sliderItems } from '../data';
+import { mobile } from '../responsive';
+import { useNavigate } from 'react-router-dom'; // ✅ Import
 
 const Container = styled.div`
   width: 100%;
@@ -11,7 +11,7 @@ const Container = styled.div`
   display: flex;
   position: relative;
   overflow: hidden;
-  ${mobile({ display: "none" })}
+  ${mobile({ display: 'none' })}
 `;
 
 const Arrow = styled.div`
@@ -25,8 +25,8 @@ const Arrow = styled.div`
   position: absolute;
   top: 0;
   bottom: 0;
-  left: ${(props) => props.direction === "left" && "10px"};
-  right: ${(props) => props.direction === "right" && "10px"};
+  left: ${(props) => props.direction === 'left' && '10px'};
+  right: ${(props) => props.direction === 'right' && '10px'};
   margin: auto;
   cursor: pointer;
   opacity: 0.5;
@@ -85,31 +85,30 @@ const Slider = () => {
   const navigate = useNavigate(); // ✅ Hook
 
   const handleClick = (direction) => {
-    if (direction === "left") {
+    if (direction === 'left') {
       setSlideIndex(slideIndex > 0 ? slideIndex - 1 : sliderItems.length - 1);
     } else {
       setSlideIndex(slideIndex < sliderItems.length - 1 ? slideIndex + 1 : 0);
     }
   };
 
-const handleButtonClick = (item) => {
-  const title = item.title.toLowerCase();
+  const handleButtonClick = (item) => {
+    const title = item.title.toLowerCase();
 
-  if (title.includes("summer")) {
-    navigate("/products/kids");
-  } else if (title === "wear the confidence") {
-    navigate("/products/women");
-  } else if (title === "men’s fashion hub" || title === "men's fashion hub") {
-    navigate("/products/man");
-  } else {
-    navigate("/products/all"); // fallback route
-  }
-};
-
+    if (title.includes('summer')) {
+      navigate('/products/kids');
+    } else if (title === 'wear the confidence') {
+      navigate('/products/women');
+    } else if (title === 'men’s fashion hub' || title === "men's fashion hub") {
+      navigate('/products/man');
+    } else {
+      navigate('/products/all'); // fallback route
+    }
+  };
 
   return (
     <Container>
-      <Arrow direction="left" onClick={() => handleClick("left")}>
+      <Arrow direction="left" onClick={() => handleClick('left')}>
         <ArrowLeftOutlined />
       </Arrow>
       <Wrapper slideIndex={slideIndex}>
@@ -126,7 +125,7 @@ const handleButtonClick = (item) => {
           </Slide>
         ))}
       </Wrapper>
-      <Arrow direction="right" onClick={() => handleClick("right")}>
+      <Arrow direction="right" onClick={() => handleClick('right')}>
         <ArrowRightOutlined />
       </Arrow>
     </Container>

@@ -1,7 +1,7 @@
-import React from "react";
-import styled from "styled-components";
-import { Link } from "react-router-dom";
-import { mobile } from "../../responsive";
+import React from 'react';
+import styled from 'styled-components';
+import { Link } from 'react-router-dom';
+import { mobile } from '../../responsive';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 
@@ -25,7 +25,7 @@ const WelcomeTitle = styled.h1`
   font-size: 2.8rem;
   font-weight: 700;
   margin-bottom: 12px;
-  ${mobile({ fontSize: "2rem" })}
+  ${mobile({ fontSize: '2rem' })}
 `;
 
 const WelcomeSubtitle = styled.p`
@@ -166,7 +166,6 @@ const ActionButton = styled(Link)`
 const RetailerHomePage = () => {
   return (
     <>
- 
       <Navbar />
       <Container>
         <Header>
@@ -181,7 +180,8 @@ const RetailerHomePage = () => {
             <CardIcon>🛒</CardIcon>
             <CardTitle>Browse Products</CardTitle>
             <CardDescription>
-              Explore fresh produce from local farmers. Filter by location, price, and stock.
+              Explore fresh produce from local farmers. Filter by location,
+              price, and stock.
             </CardDescription>
             <CardButton to="/products">Browse Now</CardButton>
           </DashboardCard>
@@ -190,7 +190,8 @@ const RetailerHomePage = () => {
             <CardIcon>📦</CardIcon>
             <CardTitle>My Orders</CardTitle>
             <CardDescription>
-              View and manage your orders, check delivery status, and track past purchases.
+              View and manage your orders, check delivery status, and track past
+              purchases.
             </CardDescription>
             <CardButton to="/orders">Track Orders</CardButton>
           </DashboardCard>
@@ -230,8 +231,6 @@ const RetailerHomePage = () => {
             </ProductCard>
           </FeaturedProducts>
         </FeaturedSection> */}
-
-
       </Container>
       <Footer />
     </>

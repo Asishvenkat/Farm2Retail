@@ -24,13 +24,13 @@ export default function WidgetSm() {
       <ul className="widgetSmList">
         {users.map((user) => (
           <li className="widgetSmListItem" key={user._id}>
-            <img 
+            <img
               src={
-                user.img || 
+                user.img ||
                 "https://crowd-literature.eu/wp-content/uploads/2015/01/no-avatar.gif"
-              } 
-              alt={user.username} 
-              className="widgetSmImg" 
+              }
+              alt={user.username}
+              className="widgetSmImg"
             />
             <div className="widgetSmUser">
               <span className="widgetSmUsername">{user.username}</span>

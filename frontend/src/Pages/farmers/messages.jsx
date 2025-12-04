@@ -7,7 +7,8 @@ import socketService from '../../socketService';
 import axios from 'axios';
 import { format } from 'date-fns';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/';
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/';
 
 const Messages = () => {
   const [conversations, setConversations] = useState([]);
@@ -20,16 +21,19 @@ const Messages = () => {
     if (user) {
       socketService.connect(user._id);
       loadConversations();
-      
+
       // Listen for new messages
       socketService.onChatMessage((data) => {
         if (selectedChat && data.senderId === selectedChat.userId) {
-          setMessages(prev => [...prev, {
-            senderId: data.senderId,
-            message: data.message,
-            timestamp: data.timestamp,
-            isMine: false
-          }]);
+          setMessages((prev) => [
+            ...prev,
+            {
+              senderId: data.senderId,
+              message: data.message,
+              timestamp: data.timestamp,
+              isMine: false,
+            },
+          ]);
         }
         // Refresh conversations to show new message indicator
         loadConversations();
@@ -57,14 +61,16 @@ const Messages = () => {
       const res = await axios.get(
         `${API_BASE_URL}messages/conversation/${user._id}/${otherUserId}`
       );
-      setMessages(res.data.map(msg => ({
-        senderId: msg.senderId,
-        message: msg.message,
-        timestamp: msg.createdAt,
-        isMine: msg.senderId === user._id
-      })));
+      setMessages(
+        res.data.map((msg) => ({
+          senderId: msg.senderId,
+          message: msg.message,
+          timestamp: msg.createdAt,
+          isMine: msg.senderId === user._id,
+        }))
+      );
       setSelectedChat({ userId: otherUserId, userName: otherUserName });
-      
+
       // Mark as read
       await axios.put(
         `${API_BASE_URL}messages/read/${otherUserId}/${user._id}`
@@ -81,24 +87,27 @@ const Messages = () => {
       senderId: user._id,
       recipientId: selectedChat.userId,
       message: newMessage,
-      senderName: user.username || user.name
+      senderName: user.username || user.name,
     };
 
     try {
       // Send via socket
       socketService.sendMessage(messageData);
-      
+
       // Save to database
       await axios.post(`${API_BASE_URL}messages`, messageData);
-      
+
       // Add to local messages
-      setMessages(prev => [...prev, {
-        senderId: user._id,
-        message: newMessage,
-        timestamp: new Date(),
-        isMine: true
-      }]);
-      
+      setMessages((prev) => [
+        ...prev,
+        {
+          senderId: user._id,
+          message: newMessage,
+          timestamp: new Date(),
+          isMine: true,
+        },
+      ]);
+
       setNewMessage('');
     } catch (error) {
       console.error('Error sending message:', error);
@@ -110,7 +119,7 @@ const Messages = () => {
       <Navbar />
       <div className="max-w-7xl mx-auto p-4">
         <h1 className="text-3xl font-bold mb-6 text-green-700">Messages</h1>
-        
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 h-[600px]">
           {/* Conversations List */}
           <div className="bg-white rounded-lg shadow overflow-y-auto">
@@ -126,9 +135,13 @@ const Messages = () => {
                 conversations.map((conv, index) => (
                   <div
                     key={index}
-                    onClick={() => loadMessages(conv.otherUserId, conv.otherUserName)}
+                    onClick={() =>
+                      loadMessages(conv.otherUserId, conv.otherUserName)
+                    }
                     className={`p-4 cursor-pointer hover:bg-gray-50 ${
-                      selectedChat?.userId === conv.otherUserId ? 'bg-green-50' : ''
+                      selectedChat?.userId === conv.otherUserId
+                        ? 'bg-green-50'
+                        : ''
                     }`}
                   >
                     <div className="flex items-center">
@@ -136,7 +149,9 @@ const Messages = () => {
                         <User size={20} className="text-green-700" />
                       </div>
                       <div className="flex-1">
-                        <div className="font-semibold">{conv.otherUserName}</div>
+                        <div className="font-semibold">
+                          {conv.otherUserName}
+                        </div>
                         <div className="text-sm text-gray-500 truncate">
                           {conv.lastMessage}
                         </div>
@@ -170,7 +185,9 @@ const Messages = () => {
                       key={index}
                       className={`flex ${msg.isMine ? 'justify-end' : 'justify-start'}`}
                     >
-                      <div className={`max-w-[70%] ${msg.isMine ? 'order-2' : 'order-1'}`}>
+                      <div
+                        className={`max-w-[70%] ${msg.isMine ? 'order-2' : 'order-1'}`}
+                      >
                         <div
                           className={`p-3 rounded-lg ${
                             msg.isMine
@@ -211,7 +228,10 @@ const Messages = () => {
             ) : (
               <div className="flex-1 flex items-center justify-center text-gray-500">
                 <div className="text-center">
-                  <MessageCircle size={48} className="mx-auto mb-4 text-gray-300" />
+                  <MessageCircle
+                    size={48}
+                    className="mx-auto mb-4 text-gray-300"
+                  />
                   <p>Select a conversation to start chatting</p>
                 </div>
               </div>

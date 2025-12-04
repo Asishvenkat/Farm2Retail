@@ -10,9 +10,9 @@ const createMockStore = (initialState = {}) => {
   return configureStore({
     reducer: {
       user: userReducer,
-      cart: cartReducer
+      cart: cartReducer,
     },
-    preloadedState: initialState
+    preloadedState: initialState,
   });
 };
 
@@ -20,7 +20,7 @@ describe('Navbar Component', () => {
   test('renders navbar with logo', () => {
     const store = createMockStore({
       user: { currentUser: null },
-      cart: { products: [], quantity: 0 }
+      cart: { products: [], quantity: 0 },
     });
 
     render(
@@ -31,13 +31,15 @@ describe('Navbar Component', () => {
       </Provider>
     );
 
-    expect(screen.getByText(/AgroTrade/i) || screen.getByRole('navigation')).toBeInTheDocument();
+    expect(
+      screen.getByText(/AgroTrade/i) || screen.getByRole('navigation')
+    ).toBeInTheDocument();
   });
 
   test('shows cart quantity badge when items in cart', () => {
     const store = createMockStore({
       user: { currentUser: null },
-      cart: { products: [{ id: 1 }], quantity: 1 }
+      cart: { products: [{ id: 1 }], quantity: 1 },
     });
 
     render(

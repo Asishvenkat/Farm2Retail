@@ -65,7 +65,6 @@ const verifyFarmer = (req, res, next) => {
 
 // New middleware for retailer verification
 const verifyRetailer = (req, res, next) => {
-
   verifyToken(req, res, () => {
     if (req.user.role === 'retailer') {
       next();
@@ -81,7 +80,9 @@ const verifyFarmerProduct = (req, res, next) => {
     if (req.user.userType === 'farmer' || req.user.isAdmin) {
       next();
     } else {
-      res.status(403).json('Only the farmer who listed this product can modify it');
+      res
+        .status(403)
+        .json('Only the farmer who listed this product can modify it');
     }
   });
 };
@@ -92,5 +93,5 @@ export {
   verifyTokenAndAdmin,
   verifyFarmer,
   verifyRetailer,
-  verifyFarmerProduct
+  verifyFarmerProduct,
 };

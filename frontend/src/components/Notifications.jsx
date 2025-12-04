@@ -6,7 +6,8 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { formatDistanceToNow } from 'date-fns';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/';
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/';
 
 const NotificationContainer = styled.div`
   position: relative;
@@ -49,7 +50,7 @@ const Dropdown = styled.div`
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
   z-index: 1000;
   overflow: hidden;
-  display: ${props => props.$show ? 'block' : 'none'};
+  display: ${(props) => (props.$show ? 'block' : 'none')};
 `;
 
 const Header = styled.div`
@@ -89,7 +90,7 @@ const NotificationItem = styled.div`
   padding: 12px 16px;
   border-bottom: 1px solid #eee;
   cursor: pointer;
-  background: ${props => props.read ? '#fff' : '#f0f8ff'};
+  background: ${(props) => (props.read ? '#fff' : '#f0f8ff')};
   transition: background-color 0.2s;
 
   &:hover {
@@ -108,7 +109,7 @@ const NotificationText = styled.div`
 `;
 
 const NotificationTitle = styled.div`
-  font-weight: ${props => props.read ? 'normal' : '600'};
+  font-weight: ${(props) => (props.read ? 'normal' : '600')};
   font-size: 14px;
   margin-bottom: 4px;
 `;
@@ -149,8 +150,8 @@ const TypeBadge = styled.span`
   font-size: 10px;
   font-weight: 600;
   margin-bottom: 4px;
-  
-  ${props => {
+
+  ${(props) => {
     switch (props.type) {
       case 'NEW_ORDER':
         return 'background: #28a745; color: white;';
@@ -180,20 +181,20 @@ const Notifications = () => {
     if (user) {
       // Connect to socket
       socketService.connect(user._id);
-      
+
       // Fetch existing notifications
       fetchNotifications();
-      
+
       // Listen for new notifications
       socketService.onNotification((notification) => {
-        setNotifications(prev => [notification, ...prev]);
-        setUnreadCount(prev => prev + 1);
-        
+        setNotifications((prev) => [notification, ...prev]);
+        setUnreadCount((prev) => prev + 1);
+
         // Show browser notification if permitted
         if (Notification.permission === 'granted') {
           new Notification(notification.message, {
             icon: '/logo.png',
-            body: notification.message
+            body: notification.message,
           });
         }
       });
@@ -213,19 +214,21 @@ const Notifications = () => {
     try {
       const token = JSON.parse(localStorage.getItem('persist:root'))?.user;
       const currentUser = token ? JSON.parse(token).currentUser : null;
-      
+
       if (currentUser) {
         const res = await axios.get(
           `${API_BASE_URL}notifications/${currentUser._id}`,
           {
-            headers: { token: `Bearer ${currentUser.accessToken}` }
+            headers: { token: `Bearer ${currentUser.accessToken}` },
           }
         );
         // Filter out NEW_MESSAGE notifications (they appear in message icon)
-        const filteredNotifications = res.data.filter(n => n.type !== 'NEW_MESSAGE');
+        const filteredNotifications = res.data.filter(
+          (n) => n.type !== 'NEW_MESSAGE'
+        );
         setNotifications(filteredNotifications);
-        
-        const unread = filteredNotifications.filter(n => !n.read).length;
+
+        const unread = filteredNotifications.filter((n) => !n.read).length;
         setUnreadCount(unread);
       }
     } catch (error) {
@@ -237,20 +240,20 @@ const Notifications = () => {
     try {
       const token = JSON.parse(localStorage.getItem('persist:root'))?.user;
       const currentUser = token ? JSON.parse(token).currentUser : null;
-      
+
       if (currentUser) {
         await axios.put(
           `${API_BASE_URL}notifications/${notificationId}/read`,
           {},
           {
-            headers: { token: `Bearer ${currentUser.accessToken}` }
+            headers: { token: `Bearer ${currentUser.accessToken}` },
           }
         );
-        
-        setNotifications(prev =>
-          prev.map(n => n._id === notificationId ? { ...n, read: true } : n)
+
+        setNotifications((prev) =>
+          prev.map((n) => (n._id === notificationId ? { ...n, read: true } : n))
         );
-        setUnreadCount(prev => Math.max(0, prev - 1));
+        setUnreadCount((prev) => Math.max(0, prev - 1));
       }
     } catch (error) {
       console.error('Error marking notification as read:', error);
@@ -261,17 +264,17 @@ const Notifications = () => {
     try {
       const token = JSON.parse(localStorage.getItem('persist:root'))?.user;
       const currentUser = token ? JSON.parse(token).currentUser : null;
-      
+
       if (currentUser) {
         await axios.put(
           `${API_BASE_URL}notifications/${currentUser._id}/read-all`,
           {},
           {
-            headers: { token: `Bearer ${currentUser.accessToken}` }
+            headers: { token: `Bearer ${currentUser.accessToken}` },
           }
         );
-        
-        setNotifications(prev => prev.map(n => ({ ...n, read: true })));
+
+        setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
         setUnreadCount(0);
       }
     } catch (error) {
@@ -283,22 +286,23 @@ const Notifications = () => {
     try {
       const token = JSON.parse(localStorage.getItem('persist:root'))?.user;
       const currentUser = token ? JSON.parse(token).currentUser : null;
-      
+
       if (currentUser) {
-        await axios.delete(
-          `${API_BASE_URL}notifications/${notificationId}`,
-          {
-            headers: { token: `Bearer ${currentUser.accessToken}` }
-          }
-        );
-        
+        await axios.delete(`${API_BASE_URL}notifications/${notificationId}`, {
+          headers: { token: `Bearer ${currentUser.accessToken}` },
+        });
+
         // Remove notification from state
-        setNotifications(prev => prev.filter(n => n._id !== notificationId));
-        
+        setNotifications((prev) =>
+          prev.filter((n) => n._id !== notificationId)
+        );
+
         // Update unread count if notification was unread
-        const notification = notifications.find(n => n._id === notificationId);
+        const notification = notifications.find(
+          (n) => n._id === notificationId
+        );
         if (notification && !notification.read) {
-          setUnreadCount(prev => Math.max(0, prev - 1));
+          setUnreadCount((prev) => Math.max(0, prev - 1));
         }
       }
     } catch (error) {
@@ -310,7 +314,7 @@ const Notifications = () => {
     if (!notification.read) {
       markAsRead(notification._id);
     }
-    
+
     // Navigate to relevant page if link exists
     if (notification.link) {
       window.location.href = notification.link;
@@ -321,7 +325,9 @@ const Notifications = () => {
     <NotificationContainer>
       <BellIcon onClick={() => setShowDropdown(!showDropdown)}>
         <Bell size={24} />
-        {unreadCount > 0 && <Badge>{unreadCount > 99 ? '99+' : unreadCount}</Badge>}
+        {unreadCount > 0 && (
+          <Badge>{unreadCount > 99 ? '99+' : unreadCount}</Badge>
+        )}
       </BellIcon>
 
       <Dropdown $show={showDropdown}>
@@ -357,13 +363,17 @@ const Notifications = () => {
                       {notification.message}
                     </NotificationMessage>
                     <NotificationTime>
-                      {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
+                      {formatDistanceToNow(new Date(notification.createdAt), {
+                        addSuffix: true,
+                      })}
                     </NotificationTime>
                   </NotificationText>
-                  <CloseButton onClick={(e) => {
-                    e.stopPropagation();
-                    deleteNotification(notification._id);
-                  }}>
+                  <CloseButton
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteNotification(notification._id);
+                    }}
+                  >
                     <X size={16} />
                   </CloseButton>
                 </NotificationContent>

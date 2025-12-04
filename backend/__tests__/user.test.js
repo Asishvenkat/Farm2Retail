@@ -18,13 +18,13 @@ describe('Admin/User API Tests', () => {
     test('should get all users', async () => {
       const mockUsers = [
         { _id: '1', username: 'user1', email: 'user1@test.com' },
-        { _id: '2', username: 'user2', email: 'user2@test.com' }
+        { _id: '2', username: 'user2', email: 'user2@test.com' },
       ];
 
       User.find = jest.fn().mockReturnValue({
         limit: jest.fn().mockReturnValue({
-          sort: jest.fn().mockResolvedValue(mockUsers)
-        })
+          sort: jest.fn().mockResolvedValue(mockUsers),
+        }),
       });
 
       const response = await request(app).get('/api/users?new=true');
@@ -35,7 +35,11 @@ describe('Admin/User API Tests', () => {
 
   describe('GET /api/users/:id', () => {
     test('should get user by ID', async () => {
-      const mockUser = { _id: '123', username: 'testuser', email: 'test@example.com' };
+      const mockUser = {
+        _id: '123',
+        username: 'testuser',
+        email: 'test@example.com',
+      };
 
       User.findById = jest.fn().mockResolvedValue(mockUser);
 
@@ -49,7 +53,7 @@ describe('Admin/User API Tests', () => {
     test('should get user statistics', async () => {
       const mockStats = [
         { _id: 1, total: 10 },
-        { _id: 2, total: 15 }
+        { _id: 2, total: 15 },
       ];
 
       User.aggregate = jest.fn().mockResolvedValue(mockStats);

@@ -12,7 +12,7 @@ const Main = styled.div`
   flex: 4;
   padding: 20px;
 
-  margin-right:200px
+  margin-right: 200px;
 `;
 
 const Title = styled.h2`
@@ -55,10 +55,10 @@ const Button = styled.button`
     props.type === "Coming"
       ? "orange"
       : props.type === "Delivering"
-      ? "royalblue"
-      : props.type === "Delivered"
-      ? "green"
-      : "gray"};
+        ? "royalblue"
+        : props.type === "Delivered"
+          ? "green"
+          : "gray"};
 `;
 
 const Select = styled.select`
@@ -75,7 +75,7 @@ export default function AllTransactions() {
       try {
         const res = await userRequest.get("orders");
         const sorted = res.data.sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
         );
         setOrders(sorted);
       } catch (err) {
@@ -104,8 +104,8 @@ export default function AllTransactions() {
       // Update UI
       setOrders((prev) =>
         prev.map((order) =>
-          order._id === orderId ? { ...order, status: newStatus } : order
-        )
+          order._id === orderId ? { ...order, status: newStatus } : order,
+        ),
       );
     } catch (err) {
       console.error("Error updating status:", err);

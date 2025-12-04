@@ -7,11 +7,10 @@ const router = express.Router();
 // CREATE PRODUCT (Farmers only)
 router.post('/', verifyFarmer, async (req, res) => {
   try {
-
     newProduct = new Product({
       ...req.body,
       farmerId: req.user.id,
-      farmerName: req.user.username
+      farmerName: req.user.username,
     });
 
     //  console.log('Product to be saved:', newProduct);
@@ -23,15 +22,13 @@ router.post('/', verifyFarmer, async (req, res) => {
     res.status(500).json({
       message: 'Error creating product',
       error: err.message,
-      details: err
+      details: err,
     });
   }
 });
 // UPDATE PRODUCT (Own products only)
 router.put('/:id', verifyFarmer, async (req, res) => {
   try {
-
-
     // First, find the product to verify ownership
     const existingProduct = await Product.findById(req.params.id);
 
@@ -41,14 +38,16 @@ router.put('/:id', verifyFarmer, async (req, res) => {
 
     // Check authorization
     if (existingProduct.farmerId.toString() !== req.user.id.toString()) {
-      return res.status(403).json('Unauthorized: You can only update your own products');
+      return res
+        .status(403)
+        .json('Unauthorized: You can only update your own products');
     }
 
     // Perform the update
     await Product.findByIdAndUpdate(
       req.params.id,
       { $set: req.body },
-      { runValidators: true }
+      { runValidators: true },
     );
 
     // Fetch the updated product fresh from database
@@ -56,12 +55,11 @@ router.put('/:id', verifyFarmer, async (req, res) => {
 
     console.log('✅ Product updated successfully:', updatedProduct);
     res.status(200).json(updatedProduct);
-
   } catch (err) {
     console.error('❌ Error updating product:', err);
     res.status(500).json({
       message: 'Error updating product',
-      error: err.message
+      error: err.message,
     });
   }
 });
@@ -71,7 +69,7 @@ router.get('/location/:area', verifyRetailer, async (req, res) => {
   try {
     const products = await Product.find({
       location: new RegExp(req.params.area, 'i'),
-      available: true
+      available: true,
     })
       .select('name category price quantity farmerId farmerName')
       .sort({ price: 1 });
@@ -82,13 +80,12 @@ router.get('/location/:area', verifyRetailer, async (req, res) => {
   }
 });
 
-
 // DELETE PRODUCT (Own products only)
 router.delete('/:id', verifyFarmer, async (req, res) => {
   try {
     const deleted = await Product.findOneAndDelete({
       _id: req.params.id,
-      farmerId: req.user.id
+      farmerId: req.user.id,
     });
     if (!deleted) {
       return res.status(404).json('Product not found or unauthorized');
@@ -98,7 +95,6 @@ router.delete('/:id', verifyFarmer, async (req, res) => {
     res.status(500).json(err);
   }
 });
-
 
 // GET FARMER'S PRODUCTS
 router.get('/farmer/my-products', verifyFarmer, async (req, res) => {
@@ -116,7 +112,7 @@ router.get('/:id', async (req, res) => {
   try {
     const product = await Product.findOne({
       _id: req.params.id,
-      available: true
+      available: true,
     });
     if (!product) {
       return res.status(404).json('Product not available');
@@ -144,8 +140,7 @@ router.get('/', async (req, res) => {
       filter.price = { $gte: min, $lte: max };
     }
 
-    const products = await Product.find(filter)
-      .sort({ createdAt: -1 });
+    const products = await Product.find(filter).sort({ createdAt: -1 });
 
     res.status(200).json(products);
   } catch (err) {

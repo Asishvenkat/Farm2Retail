@@ -11,7 +11,8 @@ class SocketService {
       return this.socket;
     }
 
-    const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
+    const SOCKET_URL =
+      import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
 
     this.socket = io(SOCKET_URL, {
       transports: ['websocket', 'polling'],
@@ -98,7 +99,7 @@ class SocketService {
       this.socket.on('notification:productUpdate', callback);
       this.socket.on('notification:priceChange', callback);
       this.socket.on('notification:stockUpdate', callback);
-      
+
       // Store callback for cleanup
       this.listeners.set('notifications', callback);
     }

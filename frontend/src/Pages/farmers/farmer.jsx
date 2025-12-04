@@ -1,9 +1,9 @@
-import React from "react";
-import styled from "styled-components";
-import { Link } from "react-router-dom";
-import { mobile } from "../../responsive";
-import Navbar from "../../components/Navbar";
-import Footer from "../../components/Footer";
+import React from 'react';
+import styled from 'styled-components';
+import { Link } from 'react-router-dom';
+import { mobile } from '../../responsive';
+import Navbar from '../../components/Navbar';
+import Footer from '../../components/Footer';
 
 const Container = styled.div`
   min-height: 100vh;
@@ -36,28 +36,34 @@ const Header = styled.div`
 
   /* Enhanced overlay for better text readability */
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: linear-gradient(135deg, rgba(130, 188, 133, 0.75), rgba(108, 218, 115, 0.5));
+    background: linear-gradient(
+      135deg,
+      rgba(130, 188, 133, 0.75),
+      rgba(108, 218, 115, 0.5)
+    );
     z-index: 1;
   }
 
   /* Ensure text content appears above the overlay */
-  h1, p {
+  h1,
+  p {
     position: relative;
     z-index: 2;
     max-width: 700px;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3); /* Added text shadow for better readability */
   }
 
-  ${mobile({ 
-    minHeight: "350px", 
-    padding: "50px 20px",
-    backgroundPosition: "center center" /* Ensure proper positioning on mobile */
+  ${mobile({
+    minHeight: '350px',
+    padding: '50px 20px',
+    backgroundPosition:
+      'center center' /* Ensure proper positioning on mobile */,
   })}
 `;
 
@@ -66,7 +72,7 @@ const Title = styled.h1`
   margin: 0 0 15px 0;
   font-weight: 800;
   letter-spacing: 1px;
-  ${mobile({ fontSize: "2.2rem" })}
+  ${mobile({ fontSize: '2.2rem' })}
 `;
 
 const Subtitle = styled.p`
@@ -74,7 +80,7 @@ const Subtitle = styled.p`
   margin: 0;
   opacity: 0.95;
   font-weight: 300;
-  ${mobile({ fontSize: "1.1rem" })}
+  ${mobile({ fontSize: '1.1rem' })}
 `;
 
 const FeatureGrid = styled.div`
@@ -93,7 +99,7 @@ const FeatureCard = styled.div`
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   border: 1px solid rgba(76, 175, 80, 0.1);
-  
+
   &:hover {
     transform: translateY(-8px) scale(1.02);
     box-shadow: 0 20px 60px rgba(76, 175, 80, 0.15);
@@ -131,7 +137,7 @@ const ActionButton = styled(Link)`
   font-size: 1rem;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
-  
+
   &:hover {
     background: linear-gradient(135deg, #45a049 0%, #388e3c 100%);
     box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
@@ -141,26 +147,29 @@ const ActionButton = styled(Link)`
 
 const features = [
   {
-    icon: "🌾",
-    title: "My Products",
-    description: "View and manage all your listed products. Update prices, quantities, and availability for retailers.",
-    link: "/farmer/products",
-    action: "Manage Products"
+    icon: '🌾',
+    title: 'My Products',
+    description:
+      'View and manage all your listed products. Update prices, quantities, and availability for retailers.',
+    link: '/farmer/products',
+    action: 'Manage Products',
   },
   {
-    icon: "📦",
-    title: "Add New Product",
-    description: "List fresh produce from your farm. Set competitive prices and showcase your quality harvests.",
-    link: "/farmer/add-product",
-    action: "Add Product"
+    icon: '📦',
+    title: 'Add New Product',
+    description:
+      'List fresh produce from your farm. Set competitive prices and showcase your quality harvests.',
+    link: '/farmer/add-product',
+    action: 'Add Product',
   },
   {
-    icon: "📋",
-    title: "Orders Received",
-    description: "Track incoming orders from retailers, manage fulfillment, and monitor delivery progress.",
-    link: "/farmer/orders",
-    action: "View Orders"
-  }
+    icon: '📋',
+    title: 'Orders Received',
+    description:
+      'Track incoming orders from retailers, manage fulfillment, and monitor delivery progress.',
+    link: '/farmer/orders',
+    action: 'View Orders',
+  },
 ];
 
 const FarmerHomePage = () => {
@@ -170,7 +179,10 @@ const FarmerHomePage = () => {
       <Container>
         <Header>
           <Title>Welcome Back, Farmer</Title>
-          <Subtitle>Your digital marketplace to connect with retailers and grow your business</Subtitle>
+          <Subtitle>
+            Your digital marketplace to connect with retailers and grow your
+            business
+          </Subtitle>
         </Header>
 
         <FeatureGrid>
@@ -184,7 +196,7 @@ const FarmerHomePage = () => {
           ))}
         </FeatureGrid>
       </Container>
-      
+
       <Footer />
     </>
   );

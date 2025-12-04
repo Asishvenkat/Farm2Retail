@@ -31,7 +31,7 @@ const Header = styled.div`
   padding: 20px;
   border-radius: 8px;
   margin-bottom: 20px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 `;
 
 const Title = styled.h1`
@@ -60,25 +60,25 @@ const MessagesLayout = styled.div`
 const ConversationList = styled.div`
   background: white;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   overflow-y: auto;
   overflow-x: hidden;
   max-height: 100%;
-  
+
   /* Custom scrollbar */
   &::-webkit-scrollbar {
     width: 6px;
   }
-  
+
   &::-webkit-scrollbar-track {
     background: #f1f1f1;
   }
-  
+
   &::-webkit-scrollbar-thumb {
     background: #888;
     border-radius: 3px;
   }
-  
+
   &::-webkit-scrollbar-thumb:hover {
     background: #555;
   }
@@ -100,10 +100,10 @@ const ConversationItem = styled.div`
   border-bottom: 1px solid #f0f0f0;
   cursor: pointer;
   transition: background-color 0.2s;
-  background-color: ${props => props.$active ? '#e3f2fd' : 'white'};
-  
+  background-color: ${(props) => (props.$active ? '#e3f2fd' : 'white')};
+
   &:hover {
-    background-color: ${props => props.$active ? '#e3f2fd' : '#f5f5f5'};
+    background-color: ${(props) => (props.$active ? '#e3f2fd' : '#f5f5f5')};
   }
 `;
 
@@ -162,7 +162,7 @@ const LastMessage = styled.div`
 const ChatWindow = styled.div`
   background: white;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -196,21 +196,21 @@ const MessagesContainer = styled.div`
   background: #f9f9f9;
   min-height: 0;
   max-height: 100%;
-  
+
   /* Custom scrollbar */
   &::-webkit-scrollbar {
     width: 6px;
   }
-  
+
   &::-webkit-scrollbar-track {
     background: #f1f1f1;
   }
-  
+
   &::-webkit-scrollbar-thumb {
     background: #888;
     border-radius: 3px;
   }
-  
+
   &::-webkit-scrollbar-thumb:hover {
     background: #555;
   }
@@ -221,10 +221,10 @@ const MessageBubble = styled.div`
   padding: 12px 16px;
   border-radius: 18px;
   word-wrap: break-word;
-  align-self: ${props => props.$isSent ? 'flex-end' : 'flex-start'};
-  background: ${props => props.$isSent ? '#00796b' : 'white'};
-  color: ${props => props.$isSent ? 'white' : '#333'};
-  box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  align-self: ${(props) => (props.$isSent ? 'flex-end' : 'flex-start')};
+  background: ${(props) => (props.$isSent ? '#00796b' : 'white')};
+  color: ${(props) => (props.$isSent ? 'white' : '#333')};
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 `;
 
 const MessageText = styled.div`
@@ -342,56 +342,71 @@ const Messages = () => {
     const token = user?.accessToken;
     return {
       headers: {
-        token: `Bearer ${token}`
-      }
+        token: `Bearer ${token}`,
+      },
     };
   };
 
   const scrollToBottom = (behavior = 'smooth') => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior, block: 'nearest', inline: 'nearest' });
+      messagesEndRef.current.scrollIntoView({
+        behavior,
+        block: 'nearest',
+        inline: 'nearest',
+      });
     }
   };
 
   const fetchConversations = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}messages/conversations/${user._id}`, getAuthHeaders());
-      
+      const response = await axios.get(
+        `${BASE_URL}messages/conversations/${user._id}`,
+        getAuthHeaders()
+      );
+
       // Transform the data to match our expected format
-      const transformedConversations = response.data.map(conv => {
+      const transformedConversations = response.data.map((conv) => {
         // Get the other user's info from the lastMessage
-        const otherUser = conv.lastMessage?.senderId?._id === user._id 
-          ? conv.lastMessage?.receiverId 
-          : conv.lastMessage?.senderId;
-        
+        const otherUser =
+          conv.lastMessage?.senderId?._id === user._id
+            ? conv.lastMessage?.receiverId
+            : conv.lastMessage?.senderId;
+
         return {
           userId: conv.partnerId,
           userName: otherUser?.username || 'Unknown User',
           userType: 'user', // Can be enhanced later
           lastMessage: conv.lastMessage?.message || 'No messages yet',
-          unreadCount: conv.unreadCount || 0
+          unreadCount: conv.unreadCount || 0,
         };
       });
-      
+
       // Remove duplicates based on userId (extra safety)
-      const uniqueConversations = transformedConversations.reduce((acc, current) => {
-        const exists = acc.find(item => item.userId === current.userId);
-        if (!exists) {
-          acc.push(current);
-        }
-        return acc;
-      }, []);
-      
+      const uniqueConversations = transformedConversations.reduce(
+        (acc, current) => {
+          const exists = acc.find((item) => item.userId === current.userId);
+          if (!exists) {
+            acc.push(current);
+          }
+          return acc;
+        },
+        []
+      );
+
       setConversations(uniqueConversations);
       setLoading(false);
 
       // Auto-select conversation if navigated from product page
       if (location.state?.selectedUserId && !selectedConversation) {
         const targetConv = uniqueConversations.find(
-          c => c.userId === location.state.selectedUserId
+          (c) => c.userId === location.state.selectedUserId
         );
         if (targetConv) {
-          fetchMessages(targetConv.userId, targetConv.userName, targetConv.userType);
+          fetchMessages(
+            targetConv.userId,
+            targetConv.userName,
+            targetConv.userType
+          );
         }
       }
     } catch (err) {
@@ -407,19 +422,26 @@ const Messages = () => {
         alert('Cannot load conversation: Invalid user ID');
         return;
       }
-      
-      const response = await axios.get(`${BASE_URL}messages/conversation/${user._id}/${otherUserId}`, getAuthHeaders());
+
+      const response = await axios.get(
+        `${BASE_URL}messages/conversation/${user._id}/${otherUserId}`,
+        getAuthHeaders()
+      );
       setMessages(response.data);
-      setSelectedConversation({ userId: otherUserId, userName: otherUserName, userType });
-      
+      setSelectedConversation({
+        userId: otherUserId,
+        userName: otherUserName,
+        userType,
+      });
+
       // Scroll to bottom instantly after setting messages (not smooth for initial load)
       setTimeout(() => {
         scrollToBottom('auto');
       }, 50);
-      
+
       // Mark messages as read
       await markAsRead(otherUserId);
-      
+
       // Update conversations to reflect read status
       fetchConversations();
     } catch (err) {
@@ -430,7 +452,11 @@ const Messages = () => {
 
   const markAsRead = async (senderId) => {
     try {
-      await axios.put(`${BASE_URL}messages/read/${senderId}/${user._id}`, {}, getAuthHeaders());
+      await axios.put(
+        `${BASE_URL}messages/read/${senderId}/${user._id}`,
+        {},
+        getAuthHeaders()
+      );
     } catch (err) {
       console.error('Error marking messages as read:', err);
     }
@@ -448,17 +474,20 @@ const Messages = () => {
 
     // Listen for new messages
     const handleNewMessage = (data) => {
-      if (selectedConversation && 
-          (data.senderId === selectedConversation.userId || data.receiverId === selectedConversation.userId)) {
-        setMessages(prev => [...prev, data]);
+      if (
+        selectedConversation &&
+        (data.senderId === selectedConversation.userId ||
+          data.receiverId === selectedConversation.userId)
+      ) {
+        setMessages((prev) => [...prev, data]);
         scrollToBottom();
-        
+
         // Mark as read if conversation is open
         if (data.senderId === selectedConversation.userId) {
           markAsRead(data.senderId);
         }
       }
-      
+
       // Update conversations list
       fetchConversations();
     };
@@ -496,7 +525,10 @@ const Messages = () => {
       await axios.post(`${BASE_URL}messages`, messageData, getAuthHeaders());
 
       // Add to local messages
-      setMessages(prev => [...prev, { ...messageData, _id: Date.now().toString() }]);
+      setMessages((prev) => [
+        ...prev,
+        { ...messageData, _id: Date.now().toString() },
+      ]);
       setNewMessage('');
       scrollToBottom();
     } catch (error) {
@@ -506,7 +538,12 @@ const Messages = () => {
 
   const getInitials = (name) => {
     if (!name) return '?';
-    return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+    return name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .slice(0, 2);
   };
 
   const formatTime = (timestamp) => {
@@ -537,7 +574,7 @@ const Messages = () => {
             <ConversationHeader>
               Conversations ({conversations.length})
             </ConversationHeader>
-            
+
             {loading ? (
               <EmptyState>
                 <EmptyStateIcon>💬</EmptyStateIcon>
@@ -547,14 +584,18 @@ const Messages = () => {
               <EmptyState>
                 <EmptyStateIcon>💬</EmptyStateIcon>
                 <EmptyStateText>No conversations yet</EmptyStateText>
-                <EmptyStateSubtext>Start chatting with sellers or buyers!</EmptyStateSubtext>
+                <EmptyStateSubtext>
+                  Start chatting with sellers or buyers!
+                </EmptyStateSubtext>
               </EmptyState>
             ) : (
               conversations.map((conv) => (
                 <ConversationItem
                   key={conv.userId}
                   $active={selectedConversation?.userId === conv.userId}
-                  onClick={() => fetchMessages(conv.userId, conv.userName, conv.userType)}
+                  onClick={() =>
+                    fetchMessages(conv.userId, conv.userName, conv.userType)
+                  }
                 >
                   <ConversationUser>
                     <UserAvatar>{getInitials(conv.userName)}</UserAvatar>
@@ -566,7 +607,9 @@ const Messages = () => {
                         )}
                       </UserName>
                       <LastMessage>
-                        {typeof conv.lastMessage === 'object' ? conv.lastMessage?.message : conv.lastMessage}
+                        {typeof conv.lastMessage === 'object'
+                          ? conv.lastMessage?.message
+                          : conv.lastMessage}
                       </LastMessage>
                     </UserInfo>
                   </ConversationUser>
@@ -579,20 +622,27 @@ const Messages = () => {
             {selectedConversation ? (
               <>
                 <ChatHeader>
-                  <UserAvatar>{getInitials(selectedConversation.userName)}</UserAvatar>
+                  <UserAvatar>
+                    {getInitials(selectedConversation.userName)}
+                  </UserAvatar>
                   <ChatUserName>{selectedConversation.userName}</ChatUserName>
                 </ChatHeader>
 
                 <MessagesContainer>
                   {messages.map((msg, index) => {
                     // Handle both populated and unpopulated senderId
-                    const messageSenderId = typeof msg.senderId === 'object' ? msg.senderId._id : msg.senderId;
+                    const messageSenderId =
+                      typeof msg.senderId === 'object'
+                        ? msg.senderId._id
+                        : msg.senderId;
                     const isSent = messageSenderId === user._id;
-                    
+
                     return (
                       <MessageBubble key={msg._id || index} $isSent={isSent}>
                         <MessageText>
-                          {typeof msg.message === 'object' ? JSON.stringify(msg.message) : msg.message}
+                          {typeof msg.message === 'object'
+                            ? JSON.stringify(msg.message)
+                            : msg.message}
                         </MessageText>
                         <MessageTime>
                           <Clock size={12} />
@@ -610,9 +660,14 @@ const Messages = () => {
                     placeholder="Type a message..."
                     value={newMessage}
                     onChange={(e) => setNewMessage(e.target.value)}
-                    onKeyPress={(e) => e.key === 'Enter' && handleSendMessage(e)}
+                    onKeyPress={(e) =>
+                      e.key === 'Enter' && handleSendMessage(e)
+                    }
                   />
-                  <SendButton onClick={handleSendMessage} disabled={!newMessage.trim()}>
+                  <SendButton
+                    onClick={handleSendMessage}
+                    disabled={!newMessage.trim()}
+                  >
                     <Send size={20} />
                   </SendButton>
                 </InputContainer>
@@ -621,7 +676,9 @@ const Messages = () => {
               <EmptyState>
                 <EmptyStateIcon>👈</EmptyStateIcon>
                 <EmptyStateText>Select a conversation</EmptyStateText>
-                <EmptyStateSubtext>Choose a conversation from the list to start chatting</EmptyStateSubtext>
+                <EmptyStateSubtext>
+                  Choose a conversation from the list to start chatting
+                </EmptyStateSubtext>
               </EmptyState>
             )}
           </ChatWindow>

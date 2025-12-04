@@ -1,50 +1,51 @@
 import React, { useState } from 'react';
 import { Eye, EyeOff, Loader2, User, Mail, Shield } from 'lucide-react';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/';
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/';
 
 const ModernRegister = () => {
   const [inputs, setInputs] = useState({
-    username: "",
-    email: "",
-    password: "",
-    role: "retailer"
+    username: '',
+    email: '',
+    password: '',
+    role: 'retailer',
   });
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     setInputs({ ...inputs, [e.target.name]: e.target.value });
-    setError(""); // Clear error when user types
+    setError(''); // Clear error when user types
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setError("");
-    
+    setError('');
+
     try {
       const response = await fetch(`${API_BASE_URL}auth/register`, {
-        method: "POST",
+        method: 'POST',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(inputs),
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Registration failed");
+        throw new Error(errorData.message || 'Registration failed');
       }
-      
+
       const data = await response.json();
-      console.log("Registered:", data);
+      console.log('Registered:', data);
       // Navigate to home or login page
-      window.location.href = "/";
+      window.location.href = '/';
     } catch (err) {
-      console.error("Registration error:", err.message);
-      setError(err.message || "Registration failed. Please try again.");
+      console.error('Registration error:', err.message);
+      setError(err.message || 'Registration failed. Please try again.');
     } finally {
       setIsLoading(false);
     }
@@ -54,9 +55,12 @@ const ModernRegister = () => {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 py-8">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23059669' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
-        }}></div>
+        <div
+          className="absolute inset-0"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23059669' fill-opacity='0.1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
+          }}
+        ></div>
       </div>
 
       <div className="relative w-full max-w-lg mx-4">
@@ -66,7 +70,9 @@ const ModernRegister = () => {
             <span className="text-white font-bold text-xl">F2M</span>
           </div>
           <h1 className="text-3xl font-bold text-gray-900">Join Farm2Market</h1>
-          <p className="text-gray-600 mt-2">Create your account and start connecting</p>
+          <p className="text-gray-600 mt-2">
+            Create your account and start connecting
+          </p>
         </div>
 
         {/* Register Form */}
@@ -79,18 +85,24 @@ const ModernRegister = () => {
               </label>
               <div className="grid grid-cols-2 gap-4">
                 <div
-                  onClick={() => setInputs({...inputs, role: "retailer"})}
+                  onClick={() => setInputs({ ...inputs, role: 'retailer' })}
                   className={`cursor-pointer p-4 rounded-xl border-2 transition-all ${
-                    inputs.role === "retailer" 
-                      ? "border-green-500 bg-green-50" 
-                      : "border-gray-200 hover:border-gray-300"
+                    inputs.role === 'retailer'
+                      ? 'border-green-500 bg-green-50'
+                      : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
                   <div className="flex items-center space-x-3">
-                    <div className={`w-4 h-4 rounded-full border-2 ${
-                      inputs.role === "retailer" ? "border-green-500 bg-green-500" : "border-gray-300"
-                    }`}>
-                      {inputs.role === "retailer" && <div className="w-full h-full rounded-full bg-white scale-50"></div>}
+                    <div
+                      className={`w-4 h-4 rounded-full border-2 ${
+                        inputs.role === 'retailer'
+                          ? 'border-green-500 bg-green-500'
+                          : 'border-gray-300'
+                      }`}
+                    >
+                      {inputs.role === 'retailer' && (
+                        <div className="w-full h-full rounded-full bg-white scale-50"></div>
+                      )}
                     </div>
                     <div>
                       <div className="font-medium text-gray-900">Retailer</div>
@@ -98,20 +110,26 @@ const ModernRegister = () => {
                     </div>
                   </div>
                 </div>
-                
+
                 <div
-                  onClick={() => setInputs({...inputs, role: "farmer"})}
+                  onClick={() => setInputs({ ...inputs, role: 'farmer' })}
                   className={`cursor-pointer p-4 rounded-xl border-2 transition-all ${
-                    inputs.role === "farmer" 
-                      ? "border-green-500 bg-green-50" 
-                      : "border-gray-200 hover:border-gray-300"
+                    inputs.role === 'farmer'
+                      ? 'border-green-500 bg-green-50'
+                      : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
                   <div className="flex items-center space-x-3">
-                    <div className={`w-4 h-4 rounded-full border-2 ${
-                      inputs.role === "farmer" ? "border-green-500 bg-green-500" : "border-gray-300"
-                    }`}>
-                      {inputs.role === "farmer" && <div className="w-full h-full rounded-full bg-white scale-50"></div>}
+                    <div
+                      className={`w-4 h-4 rounded-full border-2 ${
+                        inputs.role === 'farmer'
+                          ? 'border-green-500 bg-green-500'
+                          : 'border-gray-300'
+                      }`}
+                    >
+                      {inputs.role === 'farmer' && (
+                        <div className="w-full h-full rounded-full bg-white scale-50"></div>
+                      )}
                     </div>
                     <div>
                       <div className="font-medium text-gray-900">Farmer</div>
@@ -128,7 +146,10 @@ const ModernRegister = () => {
                 Username
               </label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                <User
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  size={20}
+                />
                 <input
                   type="text"
                   name="username"
@@ -147,7 +168,10 @@ const ModernRegister = () => {
                 Email Address
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                <Mail
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  size={20}
+                />
                 <input
                   type="email"
                   name="email"
@@ -166,9 +190,12 @@ const ModernRegister = () => {
                 Password
               </label>
               <div className="relative">
-                <Shield className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
+                <Shield
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                  size={20}
+                />
                 <input
-                  type={showPassword ? "text" : "password"}
+                  type={showPassword ? 'text' : 'password'}
                   name="password"
                   value={inputs.password}
                   onChange={handleChange}
@@ -188,7 +215,8 @@ const ModernRegister = () => {
 
             {/* Agreement */}
             <div className="text-sm text-gray-600 bg-gray-50 rounded-lg p-4">
-              By creating an account, I consent to the processing of my personal data in accordance with the{" "}
+              By creating an account, I consent to the processing of my personal
+              data in accordance with the{' '}
               <span className="font-semibold text-green-600 cursor-pointer hover:underline">
                 Privacy Policy
               </span>
@@ -223,7 +251,9 @@ const ModernRegister = () => {
                 <div className="w-full border-t border-gray-200"></div>
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Already have an account?</span>
+                <span className="px-2 bg-white text-gray-500">
+                  Already have an account?
+                </span>
               </div>
             </div>
 
@@ -239,9 +269,13 @@ const ModernRegister = () => {
 
         {/* Footer Links */}
         <div className="text-center mt-6 space-x-4 text-sm text-gray-500">
-          <button className="hover:text-green-600 transition-colors">Need Help?</button>
+          <button className="hover:text-green-600 transition-colors">
+            Need Help?
+          </button>
           <span>•</span>
-          <button className="hover:text-green-600 transition-colors">Contact Support</button>
+          <button className="hover:text-green-600 transition-colors">
+            Contact Support
+          </button>
         </div>
       </div>
     </div>

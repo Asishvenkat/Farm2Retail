@@ -5,35 +5,46 @@ const NotificationSchema = new mongoose.Schema(
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: true
+      required: true,
     },
     type: {
       type: String,
-      enum: ['NEW_ORDER', 'ORDER_STATUS_UPDATE', 'ORDER_STATUS', 'PRODUCT_UPDATE', 'PRICE_CHANGE', 'STOCK_UPDATE', 'PAYMENT', 'MESSAGE', 'SYSTEM', 'NEW_MESSAGE'],
-      required: true
+      enum: [
+        'NEW_ORDER',
+        'ORDER_STATUS_UPDATE',
+        'ORDER_STATUS',
+        'PRODUCT_UPDATE',
+        'PRICE_CHANGE',
+        'STOCK_UPDATE',
+        'PAYMENT',
+        'MESSAGE',
+        'SYSTEM',
+        'NEW_MESSAGE',
+      ],
+      required: true,
     },
     title: {
       type: String,
-      required: true
+      required: true,
     },
     message: {
       type: String,
-      required: true
+      required: true,
     },
     data: {
       type: mongoose.Schema.Types.Mixed,
-      default: {}
+      default: {},
     },
     read: {
       type: Boolean,
-      default: false
+      default: false,
     },
     link: {
       type: String,
-      default: ''
-    }
+      default: '',
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 // Index for faster queries

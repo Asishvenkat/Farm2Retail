@@ -1,10 +1,11 @@
-import styled from "styled-components";
-import axios from "axios";
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { mobile } from "../responsive";
+import styled from 'styled-components';
+import axios from 'axios';
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { mobile } from '../responsive';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
 
 // Container for all product cards
 const Container = styled.div`
@@ -12,7 +13,7 @@ const Container = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
-  justify-content: ${({ center }) => (center ? "center" : "space-between")};
+  justify-content: ${({ center }) => (center ? 'center' : 'space-between')};
 `;
 // Individual product card with hover effect
 const ProductCard = styled.div`
@@ -30,7 +31,7 @@ const ProductCard = styled.div`
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   }
 
-  ${mobile({ flex: "0 0 100%" })}
+  ${mobile({ flex: '0 0 100%' })}
 `;
 
 const Image = styled.img`
@@ -69,7 +70,10 @@ const Price = styled.p`
 // Product component
 const Product = ({ item }) => (
   <ProductCard>
-    <Link to={`/product/${item._id}`} style={{ textDecoration: "none", color: "inherit" }}>
+    <Link
+      to={`/product/${item._id}`}
+      style={{ textDecoration: 'none', color: 'inherit' }}
+    >
       <Image src={item.images?.[0] || item.img} alt={item.name || item.title} />
       <Info>
         <Title>{item.name || item.title}</Title>
@@ -94,7 +98,7 @@ const Products = ({ cat, filters, sort }) => {
         );
         setProducts(res.data);
       } catch (err) {
-        console.error("Error fetching products:", err);
+        console.error('Error fetching products:', err);
       }
     };
     getProducts();
@@ -119,11 +123,13 @@ const Products = ({ cat, filters, sort }) => {
 
   useEffect(() => {
     if (sort && filteredProducts.length > 0) {
-      if (sort === "newest") {
+      if (sort === 'newest') {
         setFilteredProducts((prev) =>
-          [...prev].sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          [...prev].sort(
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+          )
         );
-      } else if (sort === "asc") {
+      } else if (sort === 'asc') {
         setFilteredProducts((prev) =>
           [...prev].sort((a, b) => a.price - b.price)
         );

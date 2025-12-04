@@ -17,15 +17,21 @@ const ProductSchema = new mongoose.Schema(
     expiryDate: { type: Date },
     available: { type: Boolean, default: true },
     organic: { type: Boolean, default: false },
-    quality: { type: String, enum: ['Premium', 'Grade A', 'Grade B'], default: 'Grade A' },
+    quality: {
+      type: String,
+      enum: ['Premium', 'Grade A', 'Grade B'],
+      default: 'Grade A',
+    },
 
     // Add bulkTiers field - this is what was missing!
-    bulkTiers: [{
-      quantity: { type: Number, required: true }, // bulk quantity (e.g., 10, 50, 100)
-      price: { type: Number, required: true }     // price per unit for this tier
-    }]
+    bulkTiers: [
+      {
+        quantity: { type: Number, required: true }, // bulk quantity (e.g., 10, 50, 100)
+        price: { type: Number, required: true }, // price per unit for this tier
+      },
+    ],
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.model('Product', ProductSchema);

@@ -13,7 +13,7 @@ const ensureRazorpay = () => {
 
   if (!RAZORPAY_KEY_ID || !RAZORPAY_SECRET) {
     console.warn(
-      'Razorpay credentials are missing. Set RAZORPAY_KEY_ID and RAZORPAY_SECRET in your environment.'
+      'Razorpay credentials are missing. Set RAZORPAY_KEY_ID and RAZORPAY_SECRET in your environment.',
     );
     razorpay = null;
     return null;
@@ -22,7 +22,7 @@ const ensureRazorpay = () => {
   if (!razorpay) {
     razorpay = new Razorpay({
       key_id: RAZORPAY_KEY_ID,
-      key_secret: RAZORPAY_SECRET
+      key_secret: RAZORPAY_SECRET,
     });
   }
 
@@ -37,7 +37,7 @@ router.post('/order', paymentRateLimit, async (req, res) => {
     const options = {
       amount: amount,
       currency: currency,
-      receipt: `receipt_order_${Math.random() * 10000}`
+      receipt: `receipt_order_${Math.random() * 10000}`,
     };
 
     const client = ensureRazorpay();
@@ -84,7 +84,7 @@ router.post('/order/validate', paymentRateLimit, async (req, res) => {
   res.json({
     msg: 'success',
     orderId: razorpay_order_id,
-    paymentId: razorpay_payment_id
+    paymentId: razorpay_payment_id,
   });
 });
 

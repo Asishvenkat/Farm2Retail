@@ -1,7 +1,7 @@
-import { configureStore,combineReducers } from "@reduxjs/toolkit";
-import cartReducer from "./cartRedux";
-import userReducer from "./userRedux"; // Assuming userReducer is imported from userSlice.js    
-import wishlistReducer from "./wishlistRedux";
+import { configureStore, combineReducers } from '@reduxjs/toolkit';
+import cartReducer from './cartRedux';
+import userReducer from './userRedux'; // Assuming userReducer is imported from userSlice.js
+import wishlistReducer from './wishlistRedux';
 
 import {
   persistStore,
@@ -12,22 +12,22 @@ import {
   PERSIST,
   PURGE,
   REGISTER,
-} from 'redux-persist'
-import storage from 'redux-persist/lib/storage'
+} from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
 
 const persistConfig = {
   key: 'root',
   version: 1,
   storage,
-}
+};
 
 const rootReducer = combineReducers({
   cart: cartReducer,
   user: userReducer,
-   wishlist: wishlistReducer,
+  wishlist: wishlistReducer,
 });
 
-const persistedReducer = persistReducer(persistConfig, rootReducer)
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 
 const store = configureStore({
   reducer: persistedReducer, // Use the persisted reducer

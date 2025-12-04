@@ -17,18 +17,22 @@ router.get('/:userId', verifyTokenAndAuthorization, async (req, res) => {
 });
 
 // Get unread notification count
-router.get('/:userId/unread/count', verifyTokenAndAuthorization, async (req, res) => {
-  try {
-    const count = await Notification.countDocuments({
-      userId: req.params.userId,
-      read: false
-    });
+router.get(
+  '/:userId/unread/count',
+  verifyTokenAndAuthorization,
+  async (req, res) => {
+    try {
+      const count = await Notification.countDocuments({
+        userId: req.params.userId,
+        read: false,
+      });
 
-    res.status(200).json({ count });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+      res.status(200).json({ count });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  },
+);
 
 // Mark notification as read
 router.put('/:id/read', verifyToken, async (req, res) => {
@@ -36,7 +40,7 @@ router.put('/:id/read', verifyToken, async (req, res) => {
     const notification = await Notification.findByIdAndUpdate(
       req.params.id,
       { read: true },
-      { new: true }
+      { new: true },
     );
 
     res.status(200).json(notification);
@@ -46,18 +50,22 @@ router.put('/:id/read', verifyToken, async (req, res) => {
 });
 
 // Mark all notifications as read
-router.put('/:userId/read-all', verifyTokenAndAuthorization, async (req, res) => {
-  try {
-    await Notification.updateMany(
-      { userId: req.params.userId, read: false },
-      { read: true }
-    );
+router.put(
+  '/:userId/read-all',
+  verifyTokenAndAuthorization,
+  async (req, res) => {
+    try {
+      await Notification.updateMany(
+        { userId: req.params.userId, read: false },
+        { read: true },
+      );
 
-    res.status(200).json({ message: 'All notifications marked as read' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+      res.status(200).json({ message: 'All notifications marked as read' });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  },
+);
 
 // Create notification (usually called internally)
 router.post('/', verifyToken, async (req, res) => {
@@ -86,13 +94,17 @@ router.delete('/:id', verifyToken, async (req, res) => {
 });
 
 // Delete all read notifications
-router.delete('/:userId/clear-read', verifyTokenAndAuthorization, async (req, res) => {
-  try {
-    await Notification.deleteMany({ userId: req.params.userId, read: true });
-    res.status(200).json({ message: 'Read notifications cleared' });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
+router.delete(
+  '/:userId/clear-read',
+  verifyTokenAndAuthorization,
+  async (req, res) => {
+    try {
+      await Notification.deleteMany({ userId: req.params.userId, read: true });
+      res.status(200).json({ message: 'Read notifications cleared' });
+    } catch (err) {
+      res.status(500).json({ error: err.message });
+    }
+  },
+);
 
 export default router;

@@ -15,19 +15,19 @@ export default [
       parserOptions: {
         ecmaVersion: 'latest',
         ecmaFeatures: { jsx: true },
-        sourceType: 'module'
-      }
+        sourceType: 'module',
+      },
     },
-    settings: { 
-      react: { 
-        version: '18.3' 
-      } 
+    settings: {
+      react: {
+        version: '18.3',
+      },
     },
     plugins: {
       react,
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
-      'jsx-a11y': jsxA11y
+      'jsx-a11y': jsxA11y,
     },
     rules: {
       ...js.configs.recommended.rules,
@@ -37,14 +37,14 @@ export default [
       'react/jsx-no-target-blank': 'off',
       'react-refresh/only-export-components': [
         'warn',
-        { allowConstantExport: true }
+        { allowConstantExport: true },
       ],
       'react/prop-types': 'warn',
       'no-unused-vars': 'warn',
       'no-console': 'off',
       'prefer-const': 'warn',
-      'react-hooks/exhaustive-deps': 'warn'
-    }
+      'react-hooks/exhaustive-deps': 'warn',
+    },
   },
   {
     files: ['**/setupTests.js'],
@@ -53,17 +53,17 @@ export default [
         ...globals.jest,
         ...globals.browser,
         global: 'readonly',
-        require: 'readonly'
-      }
-    }
+        require: 'readonly',
+      },
+    },
   },
   {
     files: ['**/__tests__/**/*', '**/*.test.{js,jsx}', '**/*.spec.{js,jsx}'],
     languageOptions: {
       globals: {
         ...globals.jest,
-        ...globals.browser
-      }
-    }
-  }
+        ...globals.browser,
+      },
+    },
+  },
 ];

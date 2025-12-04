@@ -7,13 +7,13 @@ const OrderSchema = new mongoose.Schema(
       {
         productId: {
           type: String,
-          required: true
+          required: true,
         },
         quantity: {
           type: Number,
-          default: 1
-        }
-      }
+          default: 1,
+        },
+      },
     ],
     amount: { type: Number, required: true },
     address: {
@@ -21,13 +21,13 @@ const OrderSchema = new mongoose.Schema(
       city: { type: String, required: true },
       state: { type: String, required: true },
       pincode: { type: String, required: true },
-      country: { type: String, default: 'India' }
+      country: { type: String, default: 'India' },
     },
     status: { type: String, default: 'pending' },
     paymentId: { type: String }, // Razorpay payment ID
-    orderId: { type: String } // Razorpay order ID
+    orderId: { type: String }, // Razorpay order ID
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.model('Order', OrderSchema);

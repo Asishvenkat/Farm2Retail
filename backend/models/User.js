@@ -9,12 +9,12 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
       enum: ['farmer', 'retailer'],
-      default: 'retailer'
+      default: 'retailer',
     },
     isAdmin: { type: Boolean, default: false },
-    img: { type: String }
+    img: { type: String },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.model('User', UserSchema);

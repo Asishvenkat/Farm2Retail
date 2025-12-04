@@ -1,7 +1,7 @@
-import { Send } from "@material-ui/icons";
-import styled from "styled-components";
-import { mobile } from "../responsive";
-import { useState } from "react";
+import { Send } from '@material-ui/icons';
+import styled from 'styled-components';
+import { mobile } from '../responsive';
+import { useState } from 'react';
 
 const Container = styled.div`
   height: 50vh;
@@ -23,7 +23,7 @@ const Desc = styled.div`
   font-weight: 300;
   margin-bottom: 30px;
   max-width: 600px;
-  ${mobile({ fontSize: "16px" })}
+  ${mobile({ fontSize: '16px' })}
 `;
 
 const InputContainer = styled.div`
@@ -35,7 +35,7 @@ const InputContainer = styled.div`
   border: 1px solid lightgray;
   border-radius: 25px;
   overflow: hidden;
-  ${mobile({ width: "80%" })}
+  ${mobile({ width: '80%' })}
 `;
 
 const Input = styled.input`
@@ -66,21 +66,21 @@ const Message = styled.div`
 `;
 
 const Newsletter = () => {
-  const [email, setEmail] = useState("");
-  const [message, setMessage] = useState("");
+  const [email, setEmail] = useState('');
+  const [message, setMessage] = useState('');
 
   const handleSubscribe = () => {
-    if (!email || !email.includes("@")) {
-      setMessage("Please enter a valid email address.");
+    if (!email || !email.includes('@')) {
+      setMessage('Please enter a valid email address.');
       return;
     }
 
     // Simulate API call here
-    setMessage("Thank you for subscribing!");
-    setEmail("");
+    setMessage('Thank you for subscribing!');
+    setEmail('');
 
     // Optionally clear message after a few seconds
-    setTimeout(() => setMessage(""), 4000);
+    setTimeout(() => setMessage(''), 4000);
   };
 
   return (

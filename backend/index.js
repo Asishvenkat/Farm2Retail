@@ -7,7 +7,6 @@ import cors from 'cors';
 import helmet from 'helmet';
 import { arcjetMiddleware } from './middleware/arcjet.js';
 
-
 import userRoute from './routes/user.js';
 import authRoute from './routes/auth.js';
 import productRoute from './routes/product.js';
@@ -27,54 +26,55 @@ const io = new Server(server, {
       'https://farm2retail-admin-panel.vercel.app',
       'http://localhost:5173',
       'http://localhost:5174',
-      'http://localhost:3000'
+      'http://localhost:3000',
     ],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true
-  }
+    credentials: true,
+  },
 });
 
 app.set('io', io);
 
-
-app.use(helmet({
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
-      fontSrc: ["'self'", 'https://fonts.gstatic.com'],
-      imgSrc: ["'self'", 'data:', 'https://res.cloudinary.com'],
-      scriptSrc: ["'self'"],
-      connectSrc: ["'self'", 'ws:', 'wss:']
-    }
-  },
-  crossOriginEmbedderPolicy: false
-}));
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      directives: {
+        defaultSrc: ["'self'"],
+        styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+        fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+        imgSrc: ["'self'", 'data:', 'https://res.cloudinary.com'],
+        scriptSrc: ["'self'"],
+        connectSrc: ["'self'", 'ws:', 'wss:'],
+      },
+    },
+    crossOriginEmbedderPolicy: false,
+  }),
+);
 
 // Middleware
-app.use(cors({
-  origin: [
-    'https://farm2retail.vercel.app',
-    'https://farm2retail-admin-panel.vercel.app',
-    'http://localhost:5173',
-    'http://localhost:5174',
-    'http://localhost:3000'
-  ],
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization', 'token']
-}));
+app.use(
+  cors({
+    origin: [
+      'https://farm2retail.vercel.app',
+      'https://farm2retail-admin-panel.vercel.app',
+      'http://localhost:5173',
+      'http://localhost:5174',
+      'http://localhost:3000',
+    ],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'token'],
+  }),
+);
 
 app.use(express.json());
 
-
 app.use(arcjetMiddleware);
 
-
-mongoose.connect(process.env.MONGO_URL)
+mongoose
+  .connect(process.env.MONGO_URL)
   .then(() => console.log('✅ MongoDB Connected'))
   .catch((err) => console.error('❌ MongoDB connection error:', err));
-
 
 app.use('/api/auth', authRoute);
 app.use('/api/users', userRoute);
@@ -84,7 +84,6 @@ app.use('/api/orders', orderRoute);
 app.use('/api/payment', razorpayRoute);
 app.use('/api/notifications', notificationRoute);
 app.use('/api/messages', messageRoute);
-
 
 const activeUsers = new Map();
 
@@ -103,7 +102,7 @@ io.on('connection', (socket) => {
       type: 'NEW_ORDER',
       message: `New order #${orderData.orderId} received`,
       data: orderData,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
   });
 
@@ -112,7 +111,7 @@ io.on('connection', (socket) => {
       type: 'PRODUCT_UPDATE',
       message: `Product "${productData.title}" updated`,
       data: productData,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
   });
 
@@ -121,7 +120,7 @@ io.on('connection', (socket) => {
       type: 'PRICE_CHANGE',
       message: `Price updated for ${priceData.productTitle}`,
       data: priceData,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
   });
 
@@ -134,14 +133,14 @@ io.on('connection', (socket) => {
         senderId,
         senderName,
         message,
-        timestamp: new Date()
+        timestamp: new Date(),
       });
     }
 
     socket.emit('chat:messageSent', {
       success: true,
       recipientId,
-      delivered: !!recipientSocket
+      delivered: !!recipientSocket,
     });
   });
 
@@ -152,7 +151,7 @@ io.on('connection', (socket) => {
       io.to(recipientSocket).emit('chat:userTyping', {
         userId: socket.userId,
         senderName,
-        isTyping
+        isTyping,
       });
     }
   });
@@ -162,7 +161,7 @@ io.on('connection', (socket) => {
       type: 'STOCK_UPDATE',
       message: `Stock updated for ${stockData.productTitle}`,
       data: stockData,
-      timestamp: new Date()
+      timestamp: new Date(),
     });
   });
 
@@ -180,16 +179,14 @@ io.on('connection', (socket) => {
   });
 });
 
-
 app.get('/api/online-users', (req, res) => {
   res.json({
     count: activeUsers.size,
-    users: Array.from(activeUsers.keys())
+    users: Array.from(activeUsers.keys()),
   });
 });
 
 const PORT = process.env.PORT || 5000;
-
 
 if (process.env.NODE_ENV !== 'test') {
   server.listen(PORT, () => {

@@ -10,26 +10,24 @@ export default {
     'routes/**/*.js',
     'models/**/*.js',
     '!**/node_modules/**',
-    '!**/__tests__/**'
+    '!**/__tests__/**',
   ],
   coverageThreshold: {
     global: {
       branches: 60,
       functions: 60,
       lines: 60,
-      statements: 60
-    }
+      statements: 60,
+    },
   },
   setupFilesAfterEnv: ['<rootDir>/__tests__/setup.js'],
   transform: {
-    '^.+\\.js$': 'babel-jest'
+    '^.+\\.js$': 'babel-jest',
   },
-  transformIgnorePatterns: [
-    'node_modules/(?!(arcjet|@arcjet)/)'
-  ],
+  transformIgnorePatterns: ['node_modules/(?!(arcjet|@arcjet)/)'],
   verbose: true,
   forceExit: true,
   clearMocks: true,
   resetMocks: true,
-  restoreMocks: true
+  restoreMocks: true,
 };

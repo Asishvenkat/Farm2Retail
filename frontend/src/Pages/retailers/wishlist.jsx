@@ -1,23 +1,23 @@
-import { 
-  FavoriteBorder, 
-  ShoppingCart, 
-  Delete, 
-  ArrowBack 
-} from "@mui/icons-material";
-import styled from "styled-components";
-import { mobile } from "../../responsive";
-import { useSelector, useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
-import { removeFromWishlist, clearWishlist } from "../../redux/wishlistRedux";
-import { addProduct } from "../../redux/cartRedux";
-import Navbar from "../../components/Navbar";
-import Footer from "../../components/Footer";
+import {
+  FavoriteBorder,
+  ShoppingCart,
+  Delete,
+  ArrowBack,
+} from '@mui/icons-material';
+import styled from 'styled-components';
+import { mobile } from '../../responsive';
+import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { removeFromWishlist, clearWishlist } from '../../redux/wishlistRedux';
+import { addProduct } from '../../redux/cartRedux';
+import Navbar from '../../components/Navbar';
+import Footer from '../../components/Footer';
 
 const Container = styled.div``;
 
 const Wrapper = styled.div`
   padding: 20px;
-  ${mobile({ padding: "10px" })}
+  ${mobile({ padding: '10px' })}
 `;
 
 const Title = styled.h1`
@@ -33,7 +33,7 @@ const Top = styled.div`
   flex-wrap: wrap;
   gap: 10px;
   align-items: center;
-  ${mobile({ flexDirection: "column", alignItems: "stretch" })}
+  ${mobile({ flexDirection: 'column', alignItems: 'stretch' })}
 `;
 
 const Button = styled.button`
@@ -52,7 +52,7 @@ const BackButton = styled(Button)`
   border: 1px solid #ccc;
   background-color: white;
   color: #333;
-  
+
   &:hover {
     background-color: #f5f5f5;
     transform: translateY(-2px);
@@ -62,7 +62,7 @@ const BackButton = styled(Button)`
 const ClearButton = styled(Button)`
   background-color: #e91e63;
   color: white;
-  
+
   &:hover {
     background-color: #c2185b;
     transform: translateY(-2px);
@@ -72,20 +72,23 @@ const ClearButton = styled(Button)`
 const ItemCount = styled.span`
   font-weight: 500;
   color: #666;
-  ${mobile({ textAlign: "center", order: "-1" })}
+  ${mobile({ textAlign: 'center', order: '-1' })}
 `;
 
 const TopActions = styled.div`
   display: flex;
   gap: 10px;
-  ${mobile({ width: "100%", justifyContent: "space-between" })}
+  ${mobile({ width: '100%', justifyContent: 'space-between' })}
 `;
 
 const ProductsGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 20px;
-  ${mobile({ gridTemplateColumns: "repeat(auto-fill, minmax(250px, 1fr))", gap: "15px" })}
+  ${mobile({
+    gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))',
+    gap: '15px',
+  })}
 `;
 
 const Card = styled.div`
@@ -94,11 +97,11 @@ const Card = styled.div`
   background: white;
   overflow: hidden;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+
   &:hover {
     transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
   }
 `;
 
@@ -107,7 +110,7 @@ const ImageContainer = styled.div`
   cursor: pointer;
   overflow: hidden;
   height: 250px;
-  
+
   &:hover img {
     transform: scale(1.05);
   }
@@ -131,7 +134,7 @@ const Name = styled.h3`
   color: #333;
   line-height: 1.3;
   transition: color 0.3s ease;
-  
+
   &:hover {
     color: #e91e63;
   }
@@ -161,7 +164,7 @@ const ActionButton = styled(Button)`
   flex: 1;
   justify-content: center;
   font-size: 14px;
-  
+
   &:hover {
     transform: translateY(-2px);
   }
@@ -170,7 +173,7 @@ const ActionButton = styled(Button)`
 const AddToCartButton = styled(ActionButton)`
   background-color: #006666;
   color: white;
-  
+
   &:hover {
     background-color: #004d4d;
   }
@@ -179,7 +182,7 @@ const AddToCartButton = styled(ActionButton)`
 const RemoveButton = styled(ActionButton)`
   background-color: rgb(220, 35, 21);
   color: white;
-  
+
   &:hover {
     background-color: rgb(180, 25, 15);
   }
@@ -230,23 +233,26 @@ const Wishlist = () => {
   const handleRemove = (id) => {
     dispatch(removeFromWishlist(id));
   };
-  
+
   const handleClear = () => {
-    if (window.confirm("Are you sure you want to clear your entire wishlist?")) {
+    if (
+      window.confirm('Are you sure you want to clear your entire wishlist?')
+    ) {
       dispatch(clearWishlist());
     }
   };
-  
-const handleAddToCart = (product) => {
-  // Add to cart with the same structure as Product page
-  dispatch(addProduct({
-    ...product,
-    quantity: 1, // Default quantity for wishlist items
-    size: product.size, // Use the size that was selected when added to wishlist
-    color: product.color // Use the color that was selected when added to wishlist
-  }));
-};
 
+  const handleAddToCart = (product) => {
+    // Add to cart with the same structure as Product page
+    dispatch(
+      addProduct({
+        ...product,
+        quantity: 1, // Default quantity for wishlist items
+        size: product.size, // Use the size that was selected when added to wishlist
+        color: product.color, // Use the color that was selected when added to wishlist
+      })
+    );
+  };
 
   const handleProductClick = (productId) => {
     // Navigate to product detail page
@@ -261,10 +267,13 @@ const handleAddToCart = (product) => {
         <Wrapper>
           <Title>YOUR WISHLIST</Title>
           <EmptyState>
-            <FavoriteBorder style={{ fontSize: 80, color: "#ddd" }} />
+            <FavoriteBorder style={{ fontSize: 80, color: '#ddd' }} />
             <h2>Your wishlist is empty</h2>
-            <p>Save your favorite items here and never lose track of what you love!</p>
-            <BackButton onClick={() => navigate("/")}>
+            <p>
+              Save your favorite items here and never lose track of what you
+              love!
+            </p>
+            <BackButton onClick={() => navigate('/')}>
               <ArrowBack /> Start Shopping
             </BackButton>
           </EmptyState>
@@ -280,41 +289,58 @@ const handleAddToCart = (product) => {
       <Wrapper>
         <Title>YOUR WISHLIST</Title>
         <Top>
-          <BackButton onClick={() => navigate("/")}>
+          <BackButton onClick={() => navigate('/')}>
             <ArrowBack /> Continue Shopping
           </BackButton>
           <ItemCount>
-            {wishlist.quantity} {wishlist.quantity === 1 ? "item" : "items"}
+            {wishlist.quantity} {wishlist.quantity === 1 ? 'item' : 'items'}
           </ItemCount>
           <TopActions>
-            <Button onClick={() => navigate("/cart")}>
+            <Button onClick={() => navigate('/cart')}>
               <ShoppingCart /> View Cart
             </Button>
-            <ClearButton onClick={handleClear}>
-              Clear All
-            </ClearButton>
+            <ClearButton onClick={handleClear}>Clear All</ClearButton>
           </TopActions>
         </Top>
-        
+
         <ProductsGrid>
           {wishlist.products.map((product) => (
             <Card key={product._id}>
               <ImageContainer onClick={() => handleProductClick(product._id)}>
-                <Image 
-                  src={product.img} 
+                <Image
+                  src={product.img}
                   alt={product.title || product.name}
                   onError={(e) => {
-                    e.target.src = 'https://via.placeholder.com/300x250?text=No+Image';
+                    e.target.src =
+                      'https://via.placeholder.com/300x250?text=No+Image';
                   }}
                 />
               </ImageContainer>
-              
+
               <Info onClick={() => handleProductClick(product._id)}>
                 <Name>{product.title || product.name}</Name>
-                <div style={{ display: 'flex', alignItems: 'center', flexWrap: 'wrap' }}>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    flexWrap: 'wrap',
+                  }}
+                >
                   <Price>₹{product.price}</Price>
-                  {product.unit && <span style={{ color: '#666', fontSize: '14px', marginLeft: '8px' }}>per {product.unit}</span>}
-                  {product.category && <CategoryBadge>{product.category}</CategoryBadge>}
+                  {product.unit && (
+                    <span
+                      style={{
+                        color: '#666',
+                        fontSize: '14px',
+                        marginLeft: '8px',
+                      }}
+                    >
+                      per {product.unit}
+                    </span>
+                  )}
+                  {product.category && (
+                    <CategoryBadge>{product.category}</CategoryBadge>
+                  )}
                 </div>
               </Info>
 
@@ -327,9 +353,23 @@ const handleAddToCart = (product) => {
 
               {(product.color || product.size) && (
                 <ProductDetails>
-                  {product.color && <span>Color: {Array.isArray(product.color) ? product.color[0] : product.color}</span>}
-                  {product.color && product.size && " • "}
-                  {product.size && <span>Size: {Array.isArray(product.size) ? product.size[0] : product.size}</span>}
+                  {product.color && (
+                    <span>
+                      Color:{' '}
+                      {Array.isArray(product.color)
+                        ? product.color[0]
+                        : product.color}
+                    </span>
+                  )}
+                  {product.color && product.size && ' • '}
+                  {product.size && (
+                    <span>
+                      Size:{' '}
+                      {Array.isArray(product.size)
+                        ? product.size[0]
+                        : product.size}
+                    </span>
+                  )}
                 </ProductDetails>
               )}
 

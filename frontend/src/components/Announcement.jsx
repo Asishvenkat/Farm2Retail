@@ -1,5 +1,5 @@
-import styled, { keyframes } from "styled-components";
-import { mobile } from "../responsive"; // make sure this is defined in your project
+import styled, { keyframes } from 'styled-components';
+import { mobile } from '../responsive'; // make sure this is defined in your project
 
 // Animation for sliding effect
 const slide = keyframes`
@@ -17,7 +17,7 @@ const Container = styled.div`
   justify-content: center;
   font-size: 14px;
   font-weight: 500;
-  ${mobile({ fontSize: "12px", height: "25px" })}
+  ${mobile({ fontSize: '12px', height: '25px' })}
 `;
 
 const SlidingText = styled.div`

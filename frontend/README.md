@@ -8,6 +8,7 @@ E-commerce platform frontend for farmers and retailers to trade agricultural pro
 ## 🚀 Features
 
 ### For Farmers
+
 - Product listing with multiple images
 - Bulk pricing tier management
 - Real-time order notifications
@@ -16,6 +17,7 @@ E-commerce platform frontend for farmers and retailers to trade agricultural pro
 - Order history and analytics
 
 ### For Retailers
+
 - Advanced product search & filtering
 - Shopping cart & wishlist
 - Secure checkout (Razorpay)
@@ -92,6 +94,7 @@ frontend/
 ## 🌐 Key Routes
 
 ### Public Routes
+
 - `/` - Home page
 - `/login` - User login
 - `/register` - User registration
@@ -99,12 +102,14 @@ frontend/
 - `/product/:id` - Product details
 
 ### Farmer Routes
+
 - `/farmer` - Farmer dashboard
 - `/farmer/add` - Add new product
 - `/farmer/products` - Manage products
 - `/farmer/update/:id` - Update product
 
 ### Retailer Routes
+
 - `/cart` - Shopping cart
 - `/wishlist` - Wishlist
 - `/orders` - Order history
@@ -124,6 +129,7 @@ const orders = await userRequest.get('/orders/find/userId');
 ## 🔔 Real-time Features
 
 Socket.io integration for:
+
 - Order notifications
 - Product updates
 - Price changes
@@ -133,6 +139,7 @@ Socket.io integration for:
 ## 💳 Payment Integration
 
 Razorpay integration for secure payments:
+
 - Order creation
 - Payment verification
 - Transaction tracking
@@ -151,22 +158,27 @@ Fully responsive using Styled Components with mobile-first approach.
 ## 🧪 Testing
 
 Run tests with coverage:
+
 ```bash
 npm test
 ```
 
 Run tests in watch mode:
+
 ```bash
 npm test -- --watch
 ```
 
 Generate coverage report:
+
 ```bash
 npm test -- --coverage
 ```
 
 ### Test Coverage
+
 Component tests include:
+
 - Navbar rendering and cart badge
 - Login form interactions
 - Footer links and social media
@@ -175,16 +187,19 @@ Component tests include:
 ## 📝 Code Quality
 
 ### Linting
+
 ```bash
 npm run lint
 ```
 
 ### Formatting
+
 ```bash
 npm run format
 ```
 
 ### Pre-commit Hooks
+
 Husky runs lint-staged automatically before each commit to ensure code quality.
 
 ## 🚢 Deployment
@@ -195,7 +210,9 @@ Build command: `npm run build`
 Output directory: `dist`
 
 ### Environment Variables
+
 Create a `.env` file:
+
 ```env
 VITE_API_URL=your_backend_api_url
 VITE_SOCKET_URL=your_socket_server_url
@@ -211,6 +228,7 @@ VITE_RAZORPAY_KEY=your_razorpay_key
 5. Open a Pull Request
 
 ### Development Workflow
+
 - All commits are checked with Husky pre-commit hooks
 - CI/CD runs on GitHub Actions for all PRs
 - Tests and linting must pass before merge
@@ -218,4 +236,3 @@ VITE_RAZORPAY_KEY=your_razorpay_key
 ## 📄 License
 
 MIT
-

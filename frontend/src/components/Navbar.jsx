@@ -1,14 +1,19 @@
-import { Search, ShoppingCartOutlined, FavoriteBorder, ChatBubbleOutline } from "@mui/icons-material";
-import React, { useState, useEffect } from "react";
-import styled from "styled-components";
-import { mobile } from "../responsive";
-import { useSelector, useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
-import { logout } from "../redux/userRedux";
-import Notifications from "./Notifications";
-import socketService from "../socketService";
-import axios from "axios";
-import { BASE_URL } from "../requestMethods";
+import {
+  Search,
+  ShoppingCartOutlined,
+  FavoriteBorder,
+  ChatBubbleOutline,
+} from '@mui/icons-material';
+import React, { useState, useEffect } from 'react';
+import styled from 'styled-components';
+import { mobile } from '../responsive';
+import { useSelector, useDispatch } from 'react-redux';
+import { Link, useNavigate } from 'react-router-dom';
+import { logout } from '../redux/userRedux';
+import Notifications from './Notifications';
+import socketService from '../socketService';
+import axios from 'axios';
+import { BASE_URL } from '../requestMethods';
 
 // Styled Components
 const Container = styled.div`
@@ -19,7 +24,7 @@ const Container = styled.div`
   position: sticky;
   top: 0;
   z-index: 1000;
-  ${mobile({ height: "60px" })}
+  ${mobile({ height: '60px' })}
 `;
 
 const Wrapper = styled.div`
@@ -27,7 +32,7 @@ const Wrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  ${mobile({ padding: "10px 15px", flexDirection: "column", gap: "10px" })}
+  ${mobile({ padding: '10px 15px', flexDirection: 'column', gap: '10px' })}
 `;
 
 const Left = styled.div`
@@ -47,14 +52,14 @@ const Logo = styled.h1`
   &:hover {
     color: #004d40;
   }
-  ${mobile({ fontSize: "22px" })}
+  ${mobile({ fontSize: '22px' })}
 `;
 
 const Center = styled.div`
   flex: 2;
   display: flex;
   justify-content: center;
-  ${mobile({ width: "100%", justifyContent: "center" })}
+  ${mobile({ width: '100%', justifyContent: 'center' })}
 `;
 
 const SearchContainer = styled.div`
@@ -73,7 +78,7 @@ const SearchContainer = styled.div`
     background-color: #ffffff;
   }
 
-  ${mobile({ maxWidth: "90%" })}
+  ${mobile({ maxWidth: '90%' })}
 `;
 
 const Input = styled.input`
@@ -94,7 +99,7 @@ const Right = styled.div`
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  ${mobile({ flexWrap: "wrap", justifyContent: "center", gap: "10px" })}
+  ${mobile({ flexWrap: 'wrap', justifyContent: 'center', gap: '10px' })}
 `;
 
 const MenuItem = styled.div`
@@ -107,7 +112,7 @@ const MenuItem = styled.div`
     color: #00796b;
     transform: scale(1.05);
   }
-  ${mobile({ fontSize: "12px", marginLeft: "10px" })}
+  ${mobile({ fontSize: '12px', marginLeft: '10px' })}
 `;
 
 const StyledLink = styled(Link)`
@@ -162,7 +167,7 @@ const Navbar = () => {
       const handleNewMessage = (data) => {
         // Only increment if the message is for this user
         if (data.receiverId === user._id) {
-          setUnreadMessageCount(prev => prev + 1);
+          setUnreadMessageCount((prev) => prev + 1);
         }
       };
 
@@ -176,15 +181,15 @@ const Navbar = () => {
 
   const fetchUnreadCount = async () => {
     if (!user) return;
-    
+
     try {
       const token = user.accessToken;
       const response = await axios.get(
         `${BASE_URL}messages/unread/${user._id}`,
         {
           headers: {
-            token: `Bearer ${token}`
-          }
+            token: `Bearer ${token}`,
+          },
         }
       );
       setUnreadMessageCount(response.data.count || 0);
@@ -195,16 +200,14 @@ const Navbar = () => {
 
   const handleLogout = () => {
     dispatch(logout());
-    localStorage.removeItem("persist:root");
-    navigate("/");
+    localStorage.removeItem('persist:root');
+    navigate('/');
   };
 
   return (
     <Container>
       <Wrapper>
-        <Left>
-          
-        </Left>
+        <Left></Left>
 
         <Center>
           {/* <SearchContainer>

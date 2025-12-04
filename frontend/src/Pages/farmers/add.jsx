@@ -4,7 +4,8 @@ import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import { uploadMultipleToCloudinary } from '../../cloudinaryConfig';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/';
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/';
 
 const AddProduct = () => {
   const [formData, setFormData] = useState({
@@ -15,7 +16,7 @@ const AddProduct = () => {
     harvestDate: '',
     expiryDate: '',
     organic: false,
-    unit: 'kg'
+    unit: 'kg',
   });
 
   const [bulkTiers, setBulkTiers] = useState([{ quantity: 10, price: '' }]);
@@ -26,19 +27,18 @@ const AddProduct = () => {
     const { name, value, type, checked } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: type === 'checkbox' ? checked : value
+      [name]: type === 'checkbox' ? checked : value,
     }));
   };
 
   const handleBulkTierChange = (i, field, value) => {
     setBulkTiers((prev) =>
-      prev.map((tier, idx) =>
-        i === idx ? { ...tier, [field]: value } : tier
-      )
+      prev.map((tier, idx) => (i === idx ? { ...tier, [field]: value } : tier))
     );
   };
 
-  const addBulkTier = () => setBulkTiers((prev) => [...prev, { quantity: '', price: '' }]);
+  const addBulkTier = () =>
+    setBulkTiers((prev) => [...prev, { quantity: '', price: '' }]);
   const removeBulkTier = (index) => {
     if (bulkTiers.length > 1)
       setBulkTiers((prev) => prev.filter((_, i) => i !== index));
@@ -66,15 +66,15 @@ const AddProduct = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          token: `Bearer ${token}`
+          token: `Bearer ${token}`,
         },
         body: JSON.stringify({
           ...formData,
           images,
           bulkTiers,
           price: bulkTiers[0]?.price || 0,
-          quantity: bulkTiers.reduce((sum, t) => sum + t.quantity, 0)
-        })
+          quantity: bulkTiers.reduce((sum, t) => sum + t.quantity, 0),
+        }),
       });
 
       if (response.ok) {
@@ -87,7 +87,7 @@ const AddProduct = () => {
           harvestDate: '',
           expiryDate: '',
           organic: false,
-          unit: 'kg'
+          unit: 'kg',
         });
         setBulkTiers([{ quantity: 10, price: '' }]);
         setImages([]);
@@ -105,7 +105,9 @@ const AddProduct = () => {
     <>
       <Navbar />
       <div className="max-w-4xl mx-auto p-6 bg-white rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold mb-6 text-green-700">Add New Product</h2>
+        <h2 className="text-2xl font-bold mb-6 text-green-700">
+          Add New Product
+        </h2>
         <div className="space-y-4">
           {/* Name & Category */}
           <div className="grid grid-cols-2 gap-4">
@@ -192,7 +194,11 @@ const AddProduct = () => {
                   placeholder="Quantity"
                   value={tier.quantity}
                   onChange={(e) =>
-                    handleBulkTierChange(index, 'quantity', parseInt(e.target.value) || 0)
+                    handleBulkTierChange(
+                      index,
+                      'quantity',
+                      parseInt(e.target.value) || 0
+                    )
                   }
                   className="border rounded px-3 py-2 w-32 focus:ring-2 focus:ring-green-500"
                 />
@@ -201,7 +207,11 @@ const AddProduct = () => {
                   placeholder="Price"
                   value={tier.price}
                   onChange={(e) =>
-                    handleBulkTierChange(index, 'price', parseFloat(e.target.value) || '')
+                    handleBulkTierChange(
+                      index,
+                      'price',
+                      parseFloat(e.target.value) || ''
+                    )
                   }
                   className="border rounded px-3 py-2 w-32 focus:ring-2 focus:ring-green-500"
                 />

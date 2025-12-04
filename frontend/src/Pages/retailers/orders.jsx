@@ -1,13 +1,14 @@
-import styled from "styled-components";
-import { useState, useEffect } from "react";
-import { useSelector } from "react-redux";
-import axios from "axios";
-import Navbar from "../../components/Navbar";
-import Footer from "../../components/Footer";
-import { mobile } from "../../responsive";
-import { format } from "date-fns";
+import styled from 'styled-components';
+import { useState, useEffect } from 'react';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
+import Navbar from '../../components/Navbar';
+import Footer from '../../components/Footer';
+import { mobile } from '../../responsive';
+import { format } from 'date-fns';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/';
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/';
 
 // Styled Components
 const Container = styled.div``;
@@ -16,7 +17,7 @@ const Wrapper = styled.div`
   padding: 20px;
   max-width: 900px;
   margin: 0 auto;
-  ${mobile({ padding: "10px" })}
+  ${mobile({ padding: '10px' })}
 `;
 
 const Title = styled.h1`
@@ -54,9 +55,13 @@ const Status = styled.div`
   font-size: 14px;
   color: white;
   background-color: ${({ $status }) =>
-    $status === "delivered" ? "#4caf50" :
-    $status === "delivering" ? "#ff9800" :
-    $status === "pending" ? "#9e9e9e" : "#f44336"};
+    $status === 'delivered'
+      ? '#4caf50'
+      : $status === 'delivering'
+        ? '#ff9800'
+        : $status === 'pending'
+          ? '#9e9e9e'
+          : '#f44336'};
   height: fit-content;
 `;
 
@@ -85,7 +90,11 @@ const ProductCard = styled.div`
   &:hover {
     background-color: #f8f8f8;
   }
-  ${mobile({ flexDirection: "column", alignItems: "center", textAlign: "left" })}
+  ${mobile({
+    flexDirection: 'column',
+    alignItems: 'center',
+    textAlign: 'left',
+  })}
 `;
 
 const ProductImage = styled.img`
@@ -114,7 +123,7 @@ const ProductInfo = styled.div`
   justify-content: center;
   gap: 6px;
   flex: 1;
-  ${mobile({ alignItems: "center" })}
+  ${mobile({ alignItems: 'center' })}
 `;
 
 const ProductInfoItem = ({ label, value }) =>
@@ -141,7 +150,9 @@ const Button = styled.button`
   font-weight: 600;
   border-radius: 5px;
   cursor: pointer;
-  &:hover { background-color: #555; }
+  &:hover {
+    background-color: #555;
+  }
 `;
 
 const EmptyState = styled.div`
@@ -152,13 +163,13 @@ const EmptyState = styled.div`
 const Orders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const user = useSelector((state) => state.user?.currentUser);
   const token = user?.accessToken;
 
   const fetchOrders = async () => {
     if (!user?._id || !token) {
-      setError("Please login to view your orders");
+      setError('Please login to view your orders');
       setLoading(false);
       return;
     }
@@ -168,37 +179,47 @@ const Orders = () => {
         headers: { token: `Bearer ${token}` },
       });
 
-      const enrichedOrders = await Promise.all(res.data.map(async (order) => {
-        const products = await Promise.all(order.products.map(async (item) => {
-          try {
-            const pRes = await axios.get(`${API_BASE_URL}products/${item.productId}`);
-            const data = pRes.data;
-            return {
-              _id: data._id,
-              title: data.name || data.title || "Unknown Product",
-              img: data.images?.[0] || data.img,
-              price: data.price,
-              quantity: item.quantity,
-              category: data.category,
-              unit: data.unit
-            };
-          } catch {
-            return {
-              _id: item.productId,
-              title: "Product Not Available",
-              img: null,
-              quantity: item.quantity,
-              notFound: true
-            };
-          }
-        }));
-        return { ...order, products };
-      }));
+      const enrichedOrders = await Promise.all(
+        res.data.map(async (order) => {
+          const products = await Promise.all(
+            order.products.map(async (item) => {
+              try {
+                const pRes = await axios.get(
+                  `${API_BASE_URL}products/${item.productId}`
+                );
+                const data = pRes.data;
+                return {
+                  _id: data._id,
+                  title: data.name || data.title || 'Unknown Product',
+                  img: data.images?.[0] || data.img,
+                  price: data.price,
+                  quantity: item.quantity,
+                  category: data.category,
+                  unit: data.unit,
+                };
+              } catch {
+                return {
+                  _id: item.productId,
+                  title: 'Product Not Available',
+                  img: null,
+                  quantity: item.quantity,
+                  notFound: true,
+                };
+              }
+            })
+          );
+          return { ...order, products };
+        })
+      );
 
-      setOrders(enrichedOrders.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt)));
+      setOrders(
+        enrichedOrders.sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        )
+      );
     } catch (e) {
-      console.error("Error fetching orders:", e);
-      setError("Failed to load orders.");
+      console.error('Error fetching orders:', e);
+      setError('Failed to load orders.');
     } finally {
       setLoading(false);
     }
@@ -216,52 +237,73 @@ const Orders = () => {
       <Wrapper>
         <Title>MY ORDERS</Title>
 
-        {loading ? <p>Loading orders...</p> :
-          error ? <ErrorBox>{error}</ErrorBox> :
-            orders.length === 0 ? (
-              <EmptyState>
-                <h2>No Orders Found</h2>
-                <p>You haven't placed any orders yet.</p>
-                <Button onClick={() => window.location.href = "/"}>START SHOPPING</Button>
-              </EmptyState>
-            ) : (
-              orders.map(order => (
-                <OrderCard key={order._id}>
-                  <OrderHeader>
-                    <OrderDetails>
-                      <BoldText>Order #{order._id.slice(-8).toUpperCase()}</BoldText>
-                      <InfoText>Placed on {format(new Date(order.createdAt), "PPP")}</InfoText>
-                      <BoldText>Total: ₹{order.amount}</BoldText>
-                    </OrderDetails>
-                    <Status $status={order.status}>{order.status}</Status>
-                  </OrderHeader>
+        {loading ? (
+          <p>Loading orders...</p>
+        ) : error ? (
+          <ErrorBox>{error}</ErrorBox>
+        ) : orders.length === 0 ? (
+          <EmptyState>
+            <h2>No Orders Found</h2>
+            <p>You haven&apos;t placed any orders yet.</p>
+            <Button onClick={() => (window.location.href = '/')}>
+              START SHOPPING
+            </Button>
+          </EmptyState>
+        ) : (
+          orders.map((order) => (
+            <OrderCard key={order._id}>
+              <OrderHeader>
+                <OrderDetails>
+                  <BoldText>
+                    Order #{order._id.slice(-8).toUpperCase()}
+                  </BoldText>
+                  <InfoText>
+                    Placed on {format(new Date(order.createdAt), 'PPP')}
+                  </InfoText>
+                  <BoldText>Total: ₹{order.amount}</BoldText>
+                </OrderDetails>
+                <Status $status={order.status}>{order.status}</Status>
+              </OrderHeader>
 
-                  {order.products.map((product, i) => (
-                    <ProductCard key={i} onClick={() => window.location.href = `/product/${product._id}`}>
-                      {product.img && !product.notFound ? (
-                        <ProductImage src={product.img} alt={product.title} />
-                      ) : (
-                        <ProductPlaceholder>
-                          {product.notFound ? "Unavailable" : "No Image"}
-                        </ProductPlaceholder>
-                      )}
-                      <ProductInfo>
-                        <BoldText>{product.title}</BoldText>
-                        <ProductInfoItem label="Quantity" value={`${product.quantity} ${product.unit || ''}`} />
-                        <ProductInfoItem label="Category" value={product.category} />
-                        {!product.notFound && (
-                          <ProductInfoItem
-                            label="Total"
-                            value={`₹${totalPrice(product)}`}
-                          />
-                        )}
-                        <InfoText style={{ color: "#007bff", fontSize: "13px" }}>View Product →</InfoText>
-                      </ProductInfo>
-                    </ProductCard>
-                  ))}
-                </OrderCard>
-              ))
-            )}
+              {order.products.map((product, i) => (
+                <ProductCard
+                  key={i}
+                  onClick={() =>
+                    (window.location.href = `/product/${product._id}`)
+                  }
+                >
+                  {product.img && !product.notFound ? (
+                    <ProductImage src={product.img} alt={product.title} />
+                  ) : (
+                    <ProductPlaceholder>
+                      {product.notFound ? 'Unavailable' : 'No Image'}
+                    </ProductPlaceholder>
+                  )}
+                  <ProductInfo>
+                    <BoldText>{product.title}</BoldText>
+                    <ProductInfoItem
+                      label="Quantity"
+                      value={`${product.quantity} ${product.unit || ''}`}
+                    />
+                    <ProductInfoItem
+                      label="Category"
+                      value={product.category}
+                    />
+                    {!product.notFound && (
+                      <ProductInfoItem
+                        label="Total"
+                        value={`₹${totalPrice(product)}`}
+                      />
+                    )}
+                    <InfoText style={{ color: '#007bff', fontSize: '13px' }}>
+                      View Product →
+                    </InfoText>
+                  </ProductInfo>
+                </ProductCard>
+              ))}
+            </OrderCard>
+          ))
+        )}
       </Wrapper>
       <Footer />
     </Container>

@@ -5,29 +5,34 @@ Admin panel for managing the Farm2Retail e-commerce platform.
 ## 🚀 Features
 
 ### Dashboard Overview
+
 - Key metrics and analytics
 - Recent transactions
 - User statistics
 - Sales charts (Recharts)
 
 ### User Management
+
 - View all users (farmers & retailers)
 - User details and activity
 - Account status management
 
 ### Product Management
+
 - View all products across platform
 - Product approval/rejection
 - Inventory oversight
 - Price monitoring
 
 ### Transaction Management
+
 - Order history and tracking
 - Payment verification
 - Transaction analytics
 - Revenue reports
 
 ### Guest Mode
+
 - Demo access without authentication
 - Read-only dashboard preview
 - Perfect for testing and demos
@@ -110,11 +115,13 @@ admin/
 ## 🔐 Authentication
 
 ### Admin Login
+
 - Username/password authentication
 - JWT token-based sessions
 - Protected routes with Redux persist
 
 ### Guest Mode
+
 - Click "Continue as Guest" on login page
 - Read-only access to all dashboard features
 - No authentication required
@@ -123,31 +130,32 @@ admin/
 ```javascript
 // Guest user is stored in localStorage
 const guestUser = {
-  _id: 'guest_user_id',
-  username: 'Guest User',
+  _id: "guest_user_id",
+  username: "Guest User",
   isAdmin: false,
-  isGuest: true
+  isGuest: true,
 };
 ```
 
 ## 🔌 API Integration
 
 ```javascript
-import { publicRequest } from './requestMethods';
+import { publicRequest } from "./requestMethods";
 
 // Fetch all users
-const users = await publicRequest.get('/users');
+const users = await publicRequest.get("/users");
 
 // Fetch all products
-const products = await publicRequest.get('/products');
+const products = await publicRequest.get("/products");
 
 // Fetch transactions
-const orders = await publicRequest.get('/orders');
+const orders = await publicRequest.get("/orders");
 ```
 
 ## 📊 Analytics & Charts
 
 Using **Recharts** for data visualization:
+
 - Line charts for sales trends
 - Bar charts for revenue
 - Area charts for user growth
@@ -156,6 +164,7 @@ Using **Recharts** for data visualization:
 ## 🎨 UI Components
 
 Built with **Material-UI v5**:
+
 - DataGrid for advanced tables
 - Icons from `@mui/icons-material`
 - Responsive layouts
@@ -164,6 +173,7 @@ Built with **Material-UI v5**:
 ## 👥 User Roles
 
 The admin can view:
+
 - **Farmers**: Product sellers
 - **Retailers**: Product buyers
 - **Admins**: Platform managers
@@ -189,4 +199,3 @@ MIT
 ## 👤 Default Admin Credentials
 
 Contact the backend team for admin credentials or use Guest Mode for demo access.
-

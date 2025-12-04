@@ -3,7 +3,7 @@ export default {
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.js'],
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
-    '^import.meta.env$': '<rootDir>/src/__mocks__/importMetaEnv.js'
+    '^import.meta.env$': '<rootDir>/src/__mocks__/importMetaEnv.js',
   },
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest',
@@ -18,5 +18,3 @@ export default {
     '!src/setupTests.js',
   ],
 };
-
-

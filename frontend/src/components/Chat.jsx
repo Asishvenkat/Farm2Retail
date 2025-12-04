@@ -6,7 +6,8 @@ import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { format } from 'date-fns';
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/';
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/';
 
 const ChatButton = styled.button`
   position: fixed;
@@ -41,7 +42,7 @@ const ChatWindow = styled.div`
   background: white;
   border-radius: 12px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  display: ${props => props.$show ? 'flex' : 'none'};
+  display: ${(props) => (props.$show ? 'flex' : 'none')};
   flex-direction: column;
   z-index: 999;
 `;
@@ -84,15 +85,15 @@ const Message = styled.div`
   margin-bottom: 12px;
   display: flex;
   flex-direction: column;
-  align-items: ${props => props.isMine ? 'flex-end' : 'flex-start'};
+  align-items: ${(props) => (props.isMine ? 'flex-end' : 'flex-start')};
 `;
 
 const MessageBubble = styled.div`
   max-width: 70%;
   padding: 10px 14px;
   border-radius: 16px;
-  background: ${props => props.isMine ? '#007bff' : '#e9ecef'};
-  color: ${props => props.isMine ? 'white' : 'black'};
+  background: ${(props) => (props.isMine ? '#007bff' : '#e9ecef')};
+  color: ${(props) => (props.isMine ? 'white' : 'black')};
   word-wrap: break-word;
 `;
 
@@ -188,19 +189,22 @@ const Chat = ({ recipientId, recipientName }) => {
     if (user && recipientId) {
       // Connect socket
       socketService.connect(user._id);
-      
+
       // Load conversation
       loadConversation();
-      
+
       // Listen for incoming messages
       socketService.onChatMessage((data) => {
         if (data.senderId === recipientId) {
-          setMessages(prev => [...prev, {
-            senderId: data.senderId,
-            message: data.message,
-            timestamp: data.timestamp,
-            isMine: false
-          }]);
+          setMessages((prev) => [
+            ...prev,
+            {
+              senderId: data.senderId,
+              message: data.message,
+              timestamp: data.timestamp,
+              isMine: false,
+            },
+          ]);
         }
       });
 
@@ -226,21 +230,23 @@ const Chat = ({ recipientId, recipientName }) => {
     try {
       const token = JSON.parse(localStorage.getItem('persist:root'))?.user;
       const currentUser = token ? JSON.parse(token).currentUser : null;
-      
+
       if (currentUser && recipientId) {
         const res = await axios.get(
           `${API_BASE_URL}messages/conversation/${currentUser._id}/${recipientId}`,
           {
-            headers: { token: `Bearer ${currentUser.accessToken}` }
+            headers: { token: `Bearer ${currentUser.accessToken}` },
           }
         );
-        
-        setMessages(res.data.map(msg => ({
-          senderId: msg.senderId._id,
-          message: msg.message,
-          timestamp: msg.createdAt,
-          isMine: msg.senderId._id === currentUser._id
-        })));
+
+        setMessages(
+          res.data.map((msg) => ({
+            senderId: msg.senderId._id,
+            message: msg.message,
+            timestamp: msg.createdAt,
+            isMine: msg.senderId._id === currentUser._id,
+          }))
+        );
       }
     } catch (error) {
       console.error('Error loading conversation:', error);
@@ -258,16 +264,19 @@ const Chat = ({ recipientId, recipientName }) => {
       recipientId,
       message: message.trim(),
       senderId: user._id,
-      senderName: user.username
+      senderName: user.username,
     };
 
     // Optimistically add message
-    setMessages(prev => [...prev, {
-      senderId: user._id,
-      message: message.trim(),
-      timestamp: new Date(),
-      isMine: true
-    }]);
+    setMessages((prev) => [
+      ...prev,
+      {
+        senderId: user._id,
+        message: message.trim(),
+        timestamp: new Date(),
+        isMine: true,
+      },
+    ]);
 
     // Send via socket
     socketService.sendMessage(messageData);
@@ -276,17 +285,17 @@ const Chat = ({ recipientId, recipientName }) => {
     try {
       const token = JSON.parse(localStorage.getItem('persist:root'))?.user;
       const currentUser = token ? JSON.parse(token).currentUser : null;
-      
+
       if (currentUser) {
         await axios.post(
           `${API_BASE_URL}messages`,
           {
             senderId: user._id,
             receiverId: recipientId,
-            message: message.trim()
+            message: message.trim(),
           },
           {
-            headers: { token: `Bearer ${currentUser.accessToken}` }
+            headers: { token: `Bearer ${currentUser.accessToken}` },
           }
         );
       }
@@ -299,13 +308,13 @@ const Chat = ({ recipientId, recipientName }) => {
 
   const handleTyping = (e) => {
     setMessage(e.target.value);
-    
+
     // Send typing indicator
     if (user && recipientId) {
       socketService.sendTypingIndicator({
         recipientId,
         isTyping: e.target.value.length > 0,
-        senderName: user.username
+        senderName: user.username,
       });
     }
   };
@@ -338,9 +347,7 @@ const Chat = ({ recipientId, recipientName }) => {
         <MessagesContainer>
           {messages.map((msg, index) => (
             <Message key={index} isMine={msg.isMine}>
-              <MessageBubble isMine={msg.isMine}>
-                {msg.message}
-              </MessageBubble>
+              <MessageBubble isMine={msg.isMine}>{msg.message}</MessageBubble>
               <MessageTime>
                 {format(new Date(msg.timestamp), 'HH:mm')}
               </MessageTime>

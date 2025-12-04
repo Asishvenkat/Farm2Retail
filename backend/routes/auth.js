@@ -6,9 +6,8 @@ import jwt from 'jsonwebtoken';
 import { authRateLimit } from '../middleware/arcjet.js';
 
 // Middleware wrapper that skips rate limiting in test environment
-const conditionalAuthRateLimit = process.env.NODE_ENV === 'test'
-  ? (req, res, next) => next()
-  : authRateLimit;
+const conditionalAuthRateLimit =
+  process.env.NODE_ENV === 'test' ? (req, res, next) => next() : authRateLimit;
 
 //REGISTER
 router.post('/register', conditionalAuthRateLimit, async (req, res) => {
@@ -19,15 +18,19 @@ router.post('/register', conditionalAuthRateLimit, async (req, res) => {
   }
 
   // For testing, use plain password; in production, encrypt it
-  const encryptedPassword = process.env.NODE_ENV === 'test'
-    ? password
-    : CryptoJS.AES.encrypt(password, process.env.PASS_SEC || 'default_pass_sec').toString();
+  const encryptedPassword =
+    process.env.NODE_ENV === 'test'
+      ? password
+      : CryptoJS.AES.encrypt(
+        password,
+        process.env.PASS_SEC || 'default_pass_sec',
+      ).toString();
 
   const newUser = new User({
     username: req.body.username,
     email: req.body.email,
     password: encryptedPassword,
-    role: req.body.role || 'retailer' // Add role support
+    role: req.body.role || 'retailer', // Add role support
   });
 
   try {
@@ -52,7 +55,10 @@ router.post('/login', conditionalAuthRateLimit, async (req, res) => {
     if (process.env.NODE_ENV === 'test') {
       isPasswordValid = user.password === req.body.password;
     } else {
-      const hashedPassword = CryptoJS.AES.decrypt(user.password, process.env.PASS_SEC);
+      const hashedPassword = CryptoJS.AES.decrypt(
+        user.password,
+        process.env.PASS_SEC,
+      );
       const originalPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
       isPasswordValid = originalPassword === req.body.password;
     }
@@ -66,10 +72,10 @@ router.post('/login', conditionalAuthRateLimit, async (req, res) => {
         id: user._id,
         username: user.username,
         isAdmin: user.isAdmin,
-        role: user.role // Include role in JWT
+        role: user.role, // Include role in JWT
       },
       process.env.JWT_SEC,
-      { expiresIn: '3d' }
+      { expiresIn: '3d' },
     );
 
     const { password, ...others } = user._doc;

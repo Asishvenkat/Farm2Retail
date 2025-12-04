@@ -5,27 +5,27 @@ const MessageSchema = new mongoose.Schema(
     senderId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: true
+      required: true,
     },
     receiverId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: true
+      required: true,
     },
     message: {
       type: String,
       required: true,
-      trim: true
+      trim: true,
     },
     read: {
       type: Boolean,
-      default: false
+      default: false,
     },
     readAt: {
-      type: Date
-    }
+      type: Date,
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 // Index for faster queries

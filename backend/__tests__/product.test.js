@@ -18,13 +18,13 @@ describe('Product API Tests', () => {
     test('should get all products', async () => {
       const mockProducts = [
         { _id: '1', title: 'Product 1', price: 100, available: true },
-        { _id: '2', title: 'Product 2', price: 200, available: true }
+        { _id: '2', title: 'Product 2', price: 200, available: true },
       ];
 
       // Create a proper promise-like query object
       const mockQuery = {
         sort: jest.fn().mockReturnThis(),
-        exec: jest.fn().mockResolvedValue(mockProducts)
+        exec: jest.fn().mockResolvedValue(mockProducts),
       };
       // Make it then-able
       mockQuery.then = jest.fn().mockImplementation((resolve) => {
@@ -42,13 +42,18 @@ describe('Product API Tests', () => {
 
     test('should filter products by category', async () => {
       const mockProducts = [
-        { _id: '1', title: 'Product 1', category: 'vegetables', available: true }
+        {
+          _id: '1',
+          title: 'Product 1',
+          category: 'vegetables',
+          available: true,
+        },
       ];
 
       // Create a proper promise-like query object
       const mockQuery = {
         sort: jest.fn().mockReturnThis(),
-        exec: jest.fn().mockResolvedValue(mockProducts)
+        exec: jest.fn().mockResolvedValue(mockProducts),
       };
       // Make it then-able
       mockQuery.then = jest.fn().mockImplementation((resolve) => {
@@ -57,7 +62,9 @@ describe('Product API Tests', () => {
 
       Product.find = jest.fn().mockReturnValue(mockQuery);
 
-      const response = await request(app).get('/api/products?category=vegetables');
+      const response = await request(app).get(
+        '/api/products?category=vegetables',
+      );
 
       expect(response.status).toBe(200);
       expect(Array.isArray(response.body)).toBe(true);
@@ -68,7 +75,12 @@ describe('Product API Tests', () => {
 
   describe('GET /api/products/:id', () => {
     test('should get product by ID', async () => {
-      const mockProduct = { _id: '123', title: 'Test Product', price: 150, available: true };
+      const mockProduct = {
+        _id: '123',
+        title: 'Test Product',
+        price: 150,
+        available: true,
+      };
 
       Product.findOne = jest.fn().mockResolvedValue(mockProduct);
 
@@ -94,19 +106,17 @@ describe('Product API Tests', () => {
         description: 'Test description',
         price: 200,
         farmerId: '123',
-        save: jest.fn().mockResolvedValue(true)
+        save: jest.fn().mockResolvedValue(true),
       };
 
       Product.mockImplementation(() => mockProduct);
 
-      const response = await request(app)
-        .post('/api/products')
-        .send({
-          title: 'New Product',
-          description: 'Test description',
-          price: 200,
-          farmerId: '123'
-        });
+      const response = await request(app).post('/api/products').send({
+        title: 'New Product',
+        description: 'Test description',
+        price: 200,
+        farmerId: '123',
+      });
 
       expect(response.status).toBeLessThanOrEqual(500);
     });

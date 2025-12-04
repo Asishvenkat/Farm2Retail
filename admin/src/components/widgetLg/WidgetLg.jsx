@@ -12,7 +12,7 @@ export default function WidgetLg() {
         const res = await userRequest.get("orders");
         // Sort by createdAt (newest first) and take only 5
         const sortedOrders = res.data.sort(
-          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt),
         );
         setOrders(sortedOrders.slice(0, 5));
       } catch (error) {
