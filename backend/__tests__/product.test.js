@@ -30,7 +30,7 @@ describe('Product API Tests', () => {
       mockQuery.then = jest.fn().mockImplementation((resolve) => {
         resolve(mockProducts);
       });
-      
+
       Product.find = jest.fn().mockReturnValue(mockQuery);
 
       const response = await request(app).get('/api/products');
@@ -54,7 +54,7 @@ describe('Product API Tests', () => {
       mockQuery.then = jest.fn().mockImplementation((resolve) => {
         resolve(mockProducts);
       });
-      
+
       Product.find = jest.fn().mockReturnValue(mockQuery);
 
       const response = await request(app).get('/api/products?category=vegetables');

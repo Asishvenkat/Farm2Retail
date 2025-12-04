@@ -9,7 +9,7 @@ router.get('/:userId', verifyTokenAndAuthorization, async (req, res) => {
     const notifications = await Notification.find({ userId: req.params.userId })
       .sort({ createdAt: -1 })
       .limit(50);
-    
+
     res.status(200).json(notifications);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -19,11 +19,11 @@ router.get('/:userId', verifyTokenAndAuthorization, async (req, res) => {
 // Get unread notification count
 router.get('/:userId/unread/count', verifyTokenAndAuthorization, async (req, res) => {
   try {
-    const count = await Notification.countDocuments({ 
-      userId: req.params.userId, 
-      read: false 
+    const count = await Notification.countDocuments({
+      userId: req.params.userId,
+      read: false
     });
-    
+
     res.status(200).json({ count });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -38,7 +38,7 @@ router.put('/:id/read', verifyToken, async (req, res) => {
       { read: true },
       { new: true }
     );
-    
+
     res.status(200).json(notification);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -52,7 +52,7 @@ router.put('/:userId/read-all', verifyTokenAndAuthorization, async (req, res) =>
       { userId: req.params.userId, read: false },
       { read: true }
     );
-    
+
     res.status(200).json({ message: 'All notifications marked as read' });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -64,11 +64,11 @@ router.post('/', verifyToken, async (req, res) => {
   try {
     const newNotification = new Notification(req.body);
     const savedNotification = await newNotification.save();
-    
+
     // Emit socket event
     const io = req.app.get('io');
     io.to(req.body.userId).emit('notification:new', savedNotification);
-    
+
     res.status(201).json(savedNotification);
   } catch (err) {
     res.status(500).json({ error: err.message });

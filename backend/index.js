@@ -23,13 +23,13 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: [
-      "https://farm2retail.vercel.app",
-      "https://farm2retail-admin-panel.vercel.app",
-      "http://localhost:5173",
-      "http://localhost:5174",
-      "http://localhost:3000"
+      'https://farm2retail.vercel.app',
+      'https://farm2retail-admin-panel.vercel.app',
+      'http://localhost:5173',
+      'http://localhost:5174',
+      'http://localhost:3000'
     ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
   }
 });
@@ -41,28 +41,28 @@ app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:", "https://res.cloudinary.com"],
+      styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
+      fontSrc: ["'self'", 'https://fonts.gstatic.com'],
+      imgSrc: ["'self'", 'data:', 'https://res.cloudinary.com'],
       scriptSrc: ["'self'"],
-      connectSrc: ["'self'", "ws:", "wss:"],
-    },
+      connectSrc: ["'self'", 'ws:', 'wss:']
+    }
   },
-  crossOriginEmbedderPolicy: false,
+  crossOriginEmbedderPolicy: false
 }));
 
 // Middleware
 app.use(cors({
   origin: [
-    "https://farm2retail.vercel.app",
-    "https://farm2retail-admin-panel.vercel.app",
-    "http://localhost:5173",
-    "http://localhost:5174",
-    "http://localhost:3000"
+    'https://farm2retail.vercel.app',
+    'https://farm2retail-admin-panel.vercel.app',
+    'http://localhost:5173',
+    'http://localhost:5174',
+    'http://localhost:3000'
   ],
   credentials: true,
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "token"]
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'token']
 }));
 
 app.use(express.json());
@@ -72,18 +72,18 @@ app.use(arcjetMiddleware);
 
 
 mongoose.connect(process.env.MONGO_URL)
-  .then(() => console.log("✅ MongoDB Connected"))
-  .catch((err) => console.error("❌ MongoDB connection error:", err));
+  .then(() => console.log('✅ MongoDB Connected'))
+  .catch((err) => console.error('❌ MongoDB connection error:', err));
 
 
-app.use("/api/auth", authRoute);
-app.use("/api/users", userRoute);
-app.use("/api/products", productRoute);
-app.use("/api/cart", cartRoute);
-app.use("/api/orders", orderRoute);
-app.use("/api/payment", razorpayRoute);
-app.use("/api/notifications", notificationRoute);
-app.use("/api/messages", messageRoute);
+app.use('/api/auth', authRoute);
+app.use('/api/users', userRoute);
+app.use('/api/products', productRoute);
+app.use('/api/cart', cartRoute);
+app.use('/api/orders', orderRoute);
+app.use('/api/payment', razorpayRoute);
+app.use('/api/notifications', notificationRoute);
+app.use('/api/messages', messageRoute);
 
 
 const activeUsers = new Map();
@@ -194,6 +194,6 @@ const PORT = process.env.PORT || 5000;
 if (process.env.NODE_ENV !== 'test') {
   server.listen(PORT, () => {
     console.log(`🚀 Server running on port ${PORT}`);
-    console.log(`🔌 WebSocket server ready`);
+    console.log('🔌 WebSocket server ready');
   });
 }

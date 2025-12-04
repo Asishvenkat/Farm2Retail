@@ -11,8 +11,8 @@ export default [
         __filename: 'readonly',
         Buffer: 'readonly',
         module: 'readonly',
-        require: 'readonly',
-      },
+        require: 'readonly'
+      }
     },
     rules: {
       'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
@@ -30,8 +30,8 @@ export default [
       'object-curly-spacing': ['error', 'always'],
       'arrow-spacing': 'error',
       'keyword-spacing': 'error',
-      'space-before-blocks': 'error',
-    },
+      'space-before-blocks': 'error'
+    }
   },
   {
     files: ['**/*.test.js', '**/*.spec.js'],
@@ -45,8 +45,8 @@ export default [
         beforeEach: 'readonly',
         afterEach: 'readonly',
         it: 'readonly',
-        jest: 'readonly',
-      },
-    },
-  },
+        jest: 'readonly'
+      }
+    }
+  }
 ];
