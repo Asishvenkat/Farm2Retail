@@ -127,7 +127,15 @@
 <a name='L62'></a><a href='#L62'>62</a>
 <a name='L63'></a><a href='#L63'>63</a>
 <a name='L64'></a><a href='#L64'>64</a>
-<a name='L65'></a><a href='#L65'>65</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L65'></a><a href='#L65'>65</a>
+<a name='L66'></a><a href='#L66'>66</a>
+<a name='L67'></a><a href='#L67'>67</a>
+<a name='L68'></a><a href='#L68'>68</a>
+<a name='L69'></a><a href='#L69'>69</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -192,67 +200,71 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import Cart from '../models/Cart.js';
-import { verifyToken, verifyTokenAndAuthorization, verifyTokenAndAdmin } from './verifyToken.js';
+import {
+  verifyToken,
+  verifyTokenAndAuthorization,
+  verifyTokenAndAdmin,
+} from './verifyToken.js';
 import CryptoJS from 'crypto-js';
 import express from 'express';
 const router = <span class="cstat-no" title="statement not covered" >express.Router();</span>
 import User from '../models/User.js';
 &nbsp;
 //create
-<span class="cstat-no" title="statement not covered" >router.post("/",verifyToken, <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {</span>
-    const newCart =<span class="cstat-no" title="statement not covered" >new Cart(req.body);</span>
+<span class="cstat-no" title="statement not covered" >router.post('/', verifyToken, <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {</span>
+  const newCart = <span class="cstat-no" title="statement not covered" >new Cart(req.body);</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    try {</span>
-        const savedCart = <span class="cstat-no" title="statement not covered" >await newCart.save();</span>
-<span class="cstat-no" title="statement not covered" >        res.status(200).json(savedCart);</span>
-    }catch(err){
-<span class="cstat-no" title="statement not covered" >        res.status(500).json(err);</span>
-    }
-})
+<span class="cstat-no" title="statement not covered" >  try {</span>
+    const savedCart = <span class="cstat-no" title="statement not covered" >await newCart.save();</span>
+<span class="cstat-no" title="statement not covered" >    res.status(200).json(savedCart);</span>
+  } catch (err) {
+<span class="cstat-no" title="statement not covered" >    res.status(500).json(err);</span>
+  }
+});
 //Update
-<span class="cstat-no" title="statement not covered" >router.put("/:id",verifyTokenAndAuthorization,<span class="fstat-no" title="function not covered" >as</span>ync (req,res)=&gt;{</span>
-<span class="cstat-no" title="statement not covered" >    try{</span>
-        const updatedCart= <span class="cstat-no" title="statement not covered" >await Cart.findOneAndUpdate(</span>
-            { _id: req.params.id },
-            { $set: req.body },
-            { new: true }
-        );
-<span class="cstat-no" title="statement not covered" >        res.status(200).json(updatedCart);</span>
-    }catch (err){
-<span class="cstat-no" title="statement not covered" >        res.status(500).json(err);</span>
-    }
+<span class="cstat-no" title="statement not covered" >router.put('/:id', verifyTokenAndAuthorization, <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >  try {</span>
+    const updatedCart = <span class="cstat-no" title="statement not covered" >await Cart.findOneAndUpdate(</span>
+      { _id: req.params.id },
+      { $set: req.body },
+      { new: true },
+    );
+<span class="cstat-no" title="statement not covered" >    res.status(200).json(updatedCart);</span>
+  } catch (err) {
+<span class="cstat-no" title="statement not covered" >    res.status(500).json(err);</span>
+  }
 });
 &nbsp;
 //delete
-<span class="cstat-no" title="statement not covered" >router.delete("/:id",verifyTokenAndAuthorization,<span class="fstat-no" title="function not covered" >as</span>ync (req,res)=&gt;{</span>
-<span class="cstat-no" title="statement not covered" >    try{</span>
-<span class="cstat-no" title="statement not covered" >        await Cart.findByIdAndDelete(req.params.id)</span>
-<span class="cstat-no" title="statement not covered" >        res.status(200).json("Product has been deleted...")</span>
-    }catch(err){
-<span class="cstat-no" title="statement not covered" >        res.status(500).json(err);</span>
-    }
-})
+<span class="cstat-no" title="statement not covered" >router.delete('/:id', verifyTokenAndAuthorization, <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >  try {</span>
+<span class="cstat-no" title="statement not covered" >    await Cart.findByIdAndDelete(req.params.id);</span>
+<span class="cstat-no" title="statement not covered" >    res.status(200).json('Product has been deleted...');</span>
+  } catch (err) {
+<span class="cstat-no" title="statement not covered" >    res.status(500).json(err);</span>
+  }
+});
 &nbsp;
 //Get user Cart
-<span class="cstat-no" title="statement not covered" >router.get("/find/:userId",verifyTokenAndAuthorization,<span class="fstat-no" title="function not covered" >as</span>ync (req,res)=&gt;{</span>
-<span class="cstat-no" title="statement not covered" >    try{</span>
-        const cart = <span class="cstat-no" title="statement not covered" >await Cart.findOne({ userId: req.params.userId });</span>
-<span class="cstat-no" title="statement not covered" >        res.status(200).json(cart);</span>
-    }catch(err){
-<span class="cstat-no" title="statement not covered" >        res.status(500).json(err);</span>
-    }
-})
+<span class="cstat-no" title="statement not covered" >router.get('/find/:userId', verifyTokenAndAuthorization, <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >  try {</span>
+    const cart = <span class="cstat-no" title="statement not covered" >await Cart.findOne({ userId: req.params.userId });</span>
+<span class="cstat-no" title="statement not covered" >    res.status(200).json(cart);</span>
+  } catch (err) {
+<span class="cstat-no" title="statement not covered" >    res.status(500).json(err);</span>
+  }
+});
 &nbsp;
 //Get all
 &nbsp;
-<span class="cstat-no" title="statement not covered" >router.get("/",verifyTokenAndAdmin,<span class="fstat-no" title="function not covered" >as</span>ync (req,res)=&gt;{</span>
-<span class="cstat-no" title="statement not covered" >    try {</span>
-        const carts = <span class="cstat-no" title="statement not covered" >await Cart.find();</span>
-<span class="cstat-no" title="statement not covered" >        res.status(200).json(carts);</span>
-    } catch(err){
-<span class="cstat-no" title="statement not covered" >        res.status(500).json(err);</span>
-    }
-})
+<span class="cstat-no" title="statement not covered" >router.get('/', verifyTokenAndAdmin, <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >  try {</span>
+    const carts = <span class="cstat-no" title="statement not covered" >await Cart.find();</span>
+<span class="cstat-no" title="statement not covered" >    res.status(200).json(carts);</span>
+  } catch (err) {
+<span class="cstat-no" title="statement not covered" >    res.status(500).json(err);</span>
+  }
+});
 &nbsp;
 export default router;
 &nbsp;</pre></td></tr></table></pre>
@@ -262,7 +274,7 @@ export default router;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-11-14T01:46:06.941Z
+                at 2025-12-05T02:37:40.950Z
             </div>
         <script src="../prettify.js"></script>
         <script>

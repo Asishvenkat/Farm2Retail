@@ -152,7 +152,13 @@
 <a name='L87'></a><a href='#L87'>87</a>
 <a name='L88'></a><a href='#L88'>88</a>
 <a name='L89'></a><a href='#L89'>89</a>
-<a name='L90'></a><a href='#L90'>90</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a>
+<a name='L92'></a><a href='#L92'>92</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -165,22 +171,13 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -192,6 +189,16 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -217,7 +224,6 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -239,95 +245,95 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import { verifyToken, verifyTokenAndAuthorization, verifyTokenAndAdmin } from './verifyToken.js';
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import {
+  verifyToken,
+  verifyTokenAndAuthorization,
+  verifyTokenAndAdmin,
+} from './verifyToken.js';
 import CryptoJS from 'crypto-js';
 import express from 'express';
 const router = express.Router();
 import User from '../models/User.js';
 &nbsp;
-router.put("/:id",verifyTokenAndAuthorization,<span class="fstat-no" title="function not covered" >as</span>ync (req,res)=&gt;{
-<span class="cstat-no" title="statement not covered" >    console.log("Updating user:", req.body);</span>
-<span class="cstat-no" title="statement not covered" >       if(req.body.password ){</span>
-<span class="cstat-no" title="statement not covered" >           req.body.password= CryptoJS.AES.encrypt(</span>
-               req.body.password, process.env.PASS_SEC
-           ).toString();
-       }
-<span class="cstat-no" title="statement not covered" >       try{</span>
-           const updatedUser = <span class="cstat-no" title="statement not covered" >await User.findOneAndUpdate(</span>
-               { _id: req.params.id },
-               { $set: req.body },
-               { new: true }
-           );
-<span class="cstat-no" title="statement not covered" >           res.status(200).json(updatedUser);</span>
-       }catch (err){
-<span class="cstat-no" title="statement not covered" >           res.status(500).json(err);</span>
-       }
+router.put('/:id', verifyTokenAndAuthorization, <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {
+<span class="cstat-no" title="statement not covered" >  console.log('Updating user:', req.body);</span>
+<span class="cstat-no" title="statement not covered" >  if (req.body.password) {</span>
+<span class="cstat-no" title="statement not covered" >    req.body.password = CryptoJS.AES.encrypt(</span>
+      req.body.password,
+      process.env.PASS_SEC,
+    ).toString();
+  }
+<span class="cstat-no" title="statement not covered" >  try {</span>
+    const updatedUser = <span class="cstat-no" title="statement not covered" >await User.findOneAndUpdate(</span>
+      { _id: req.params.id },
+      { $set: req.body },
+      { new: true },
+    );
+<span class="cstat-no" title="statement not covered" >    res.status(200).json(updatedUser);</span>
+  } catch (err) {
+<span class="cstat-no" title="statement not covered" >    res.status(500).json(err);</span>
+  }
 });
 &nbsp;
 //delete
-router.delete("/:id",verifyTokenAndAuthorization,<span class="fstat-no" title="function not covered" >as</span>ync (req,res)=&gt;{
-<span class="cstat-no" title="statement not covered" >    try{</span>
-<span class="cstat-no" title="statement not covered" >        await User.findByIdAndDelete(req.params.id)</span>
-<span class="cstat-no" title="statement not covered" >        res.status(200).json("User has been deleted...")</span>
-    }catch(err){
-<span class="cstat-no" title="statement not covered" >        res.status(500).json(err);</span>
-    }
-})
+router.delete('/:id', verifyTokenAndAuthorization, <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {
+<span class="cstat-no" title="statement not covered" >  try {</span>
+<span class="cstat-no" title="statement not covered" >    await User.findByIdAndDelete(req.params.id);</span>
+<span class="cstat-no" title="statement not covered" >    res.status(200).json('User has been deleted...');</span>
+  } catch (err) {
+<span class="cstat-no" title="statement not covered" >    res.status(500).json(err);</span>
+  }
+});
 &nbsp;
 // GET User
-router.get("/find/:id", verifyTokenAndAdmin, <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {
-<span class="cstat-no" title="statement not covered" >    try {</span>
-        const user = <span class="cstat-no" title="statement not covered" >await User.findById(req.params.id);</span>
-        const { password, ...others } = <span class="cstat-no" title="statement not covered" >user._doc;</span>
-<span class="cstat-no" title="statement not covered" >        res.status(200).json(others);</span>
-    } catch (err) {
-<span class="cstat-no" title="statement not covered" >        res.status(500).json(err);</span>
-    }
+router.get('/find/:id', verifyTokenAndAdmin, <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {
+<span class="cstat-no" title="statement not covered" >  try {</span>
+    const user = <span class="cstat-no" title="statement not covered" >await User.findById(req.params.id);</span>
+    const { password, ...others } = <span class="cstat-no" title="statement not covered" >user._doc;</span>
+<span class="cstat-no" title="statement not covered" >    res.status(200).json(others);</span>
+  } catch (err) {
+<span class="cstat-no" title="statement not covered" >    res.status(500).json(err);</span>
+  }
 });
 &nbsp;
 // GET ALL User
-router.get("/",  async (req, res) =&gt; {
-    const query = req.query.new
-    try {
-        const users =query
-            ? await User.find().sort({_id:-1}).limit(1)
-            :<span class="branch-1 cbranch-no" title="branch not covered" >await User.find();</span>
-<span class="cstat-no" title="statement not covered" >        res.status(200).json(users);</span>
-    } catch (err) {
-        res.status(500).json(err);
-    }
+router.get('/', async (req, res) =&gt; {
+  const query = req.query.new;
+  try {
+    const users = query
+      ? await User.find().sort({ _id: -1 }).limit(1)
+      : <span class="branch-1 cbranch-no" title="branch not covered" >await User.find();</span>
+<span class="cstat-no" title="statement not covered" >    res.status(200).json(users);</span>
+  } catch (err) {
+    res.status(500).json(err);
+  }
 });
 &nbsp;
 //get user stats
-router.get("/stats", async (req, res) =&gt; {
-    const date=new Date();
-    const lastYear=new Date(date.setFullYear(date.getFullYear() - 1));
+router.get('/stats', async (req, res) =&gt; {
+  const date = new Date();
+  const lastYear = new Date(date.setFullYear(date.getFullYear() - 1));
 &nbsp;
-    try{
-&nbsp;
-        const data=await User.aggregate([
-            {$match:{createdAt:{$gte:lastYear}}},
-            {
-                $project:{
-                    month:{$month:"$createdAt"},
-                },
-            },
-            {
-                $group:{
-                    _id:"$month",
-                    total:{$sum:1},
-                }
-            }
-        ])
-        res.status(200).json(data);
-    }catch(err){
-<span class="cstat-no" title="statement not covered" >        res.status(500).json(err);</span>
-    }
-})
-&nbsp;
-&nbsp;
+  try {
+    const data = await User.aggregate([
+      { $match: { createdAt: { $gte: lastYear } } },
+      {
+        $project: {
+          month: { $month: '$createdAt' },
+        },
+      },
+      {
+        $group: {
+          _id: '$month',
+          total: { $sum: 1 },
+        },
+      },
+    ]);
+    res.status(200).json(data);
+  } catch (err) {
+<span class="cstat-no" title="statement not covered" >    res.status(500).json(err);</span>
+  }
+});
 &nbsp;
 export default router;
 &nbsp;</pre></td></tr></table></pre>
@@ -337,7 +343,7 @@ export default router;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-11-14T01:46:07.020Z
+                at 2025-12-05T02:37:41.312Z
             </div>
         <script src="../prettify.js"></script>
         <script>

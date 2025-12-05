@@ -1,9 +1,14 @@
 import '@testing-library/jest-dom';
-import { TextEncoder, TextDecoder } from 'util';
+import { vi } from 'vitest';
 
 // Polyfills for jsdom
 global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder;
+
+// Mock requestMethods
+vi.mock('./requestMethods');
+vi.mock('./socketService');
+vi.mock('./components/Notifications');
 
 // Mock IntersectionObserver
 global.IntersectionObserver = class IntersectionObserver {
@@ -38,14 +43,14 @@ global.ResizeObserver = class ResizeObserver {
 // Mock matchMedia
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: jest.fn().mockImplementation((query) => ({
+  value: vi.fn().mockImplementation((query) => ({
     matches: false,
     media: query,
     onchange: null,
-    addListener: jest.fn(), // deprecated
-    removeListener: jest.fn(), // deprecated
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
+    addListener: vi.fn(), // deprecated
+    removeListener: vi.fn(), // deprecated
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
   })),
 });

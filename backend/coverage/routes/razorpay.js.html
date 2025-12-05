@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/34</span>
+                <span class='fraction'>0/35</span>
             </div>
         
             
@@ -152,7 +152,9 @@
 <a name='L87'></a><a href='#L87'>87</a>
 <a name='L88'></a><a href='#L88'>88</a>
 <a name='L89'></a><a href='#L89'>89</a>
-<a name='L90'></a><a href='#L90'>90</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L90'></a><a href='#L90'>90</a>
+<a name='L91'></a><a href='#L91'>91</a>
+<a name='L92'></a><a href='#L92'>92</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -205,6 +207,8 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -256,7 +260,7 @@ const ensureRazorpay = <span class="cstat-no" title="statement not covered" ><sp
 &nbsp;
 <span class="cstat-no" title="statement not covered" >  if (!RAZORPAY_KEY_ID || !RAZORPAY_SECRET) {</span>
 <span class="cstat-no" title="statement not covered" >    console.warn(</span>
-      "Razorpay credentials are missing. Set RAZORPAY_KEY_ID and RAZORPAY_SECRET in your environment."
+      'Razorpay credentials are missing. Set RAZORPAY_KEY_ID and RAZORPAY_SECRET in your environment.',
     );
 <span class="cstat-no" title="statement not covered" >    razorpay = null;</span>
 <span class="cstat-no" title="statement not covered" >    return null;</span>
@@ -273,9 +277,9 @@ const ensureRazorpay = <span class="cstat-no" title="statement not covered" ><sp
 };
 &nbsp;
 // Create Razorpay Order
-<span class="cstat-no" title="statement not covered" >router.post("/order", paymentRateLimit, <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >router.post('/order', paymentRateLimit, <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >  try {</span>
-    const { amount, currency = <span class="branch-0 cbranch-no" title="branch not covered" >"INR" </span>} = <span class="cstat-no" title="statement not covered" >req.body;</span>
+    const { amount, currency = <span class="branch-0 cbranch-no" title="branch not covered" >'INR' </span>} = <span class="cstat-no" title="statement not covered" >req.body;</span>
 &nbsp;
     const options = <span class="cstat-no" title="statement not covered" >{</span>
       amount: amount,
@@ -288,42 +292,44 @@ const ensureRazorpay = <span class="cstat-no" title="statement not covered" ><sp
 <span class="cstat-no" title="statement not covered" >    if (!client) {</span>
 <span class="cstat-no" title="statement not covered" >      return res</span>
         .status(500)
-        .json({ message: "Razorpay is not configured on the server." });
+        .json({ message: 'Razorpay is not configured on the server.' });
     }
 &nbsp;
     const order = <span class="cstat-no" title="statement not covered" >await client.orders.create(options);</span>
 &nbsp;
-<span class="cstat-no" title="statement not covered" >    if (!order) <span class="cstat-no" title="statement not covered" >return res.status(500).send("Order creation failed");</span></span>
+<span class="cstat-no" title="statement not covered" >    if (!order) {</span>
+<span class="cstat-no" title="statement not covered" >      return res.status(500).send('Order creation failed');</span>
+    }
 <span class="cstat-no" title="statement not covered" >    res.json(order);</span>
   } catch (error) {
-<span class="cstat-no" title="statement not covered" >    console.error("Razorpay Order Error:", error);</span>
-<span class="cstat-no" title="statement not covered" >    res.status(500).send("Server error");</span>
+<span class="cstat-no" title="statement not covered" >    console.error('Razorpay Order Error:', error);</span>
+<span class="cstat-no" title="statement not covered" >    res.status(500).send('Server error');</span>
   }
 });
 &nbsp;
 // Validate Payment Signature
-<span class="cstat-no" title="statement not covered" >router.post("/order/validate", paymentRateLimit, <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >router.post('/order/validate', paymentRateLimit, <span class="fstat-no" title="function not covered" >as</span>ync (req, res) =&gt; {</span>
   const client = <span class="cstat-no" title="statement not covered" >ensureRazorpay();</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >  if (!client) {</span>
 <span class="cstat-no" title="statement not covered" >    return res</span>
       .status(500)
-      .json({ message: "Razorpay is not configured on the server." });
+      .json({ message: 'Razorpay is not configured on the server.' });
   }
 &nbsp;
   const { razorpay_order_id, razorpay_payment_id, razorpay_signature } =
 <span class="cstat-no" title="statement not covered" >    req.body;</span>
 &nbsp;
-  const sha = <span class="cstat-no" title="statement not covered" >crypto.createHmac("sha256", process.env.RAZORPAY_SECRET);</span>
+  const sha = <span class="cstat-no" title="statement not covered" >crypto.createHmac('sha256', process.env.RAZORPAY_SECRET);</span>
 <span class="cstat-no" title="statement not covered" >  sha.update(`${razorpay_order_id}|${razorpay_payment_id}`);</span>
-  const digest = <span class="cstat-no" title="statement not covered" >sha.digest("hex");</span>
+  const digest = <span class="cstat-no" title="statement not covered" >sha.digest('hex');</span>
 &nbsp;
 <span class="cstat-no" title="statement not covered" >  if (digest !== razorpay_signature) {</span>
-<span class="cstat-no" title="statement not covered" >    return res.status(400).json({ msg: "Invalid signature" });</span>
+<span class="cstat-no" title="statement not covered" >    return res.status(400).json({ msg: 'Invalid signature' });</span>
   }
 &nbsp;
 <span class="cstat-no" title="statement not covered" >  res.json({</span>
-    msg: "success",
+    msg: 'success',
     orderId: razorpay_order_id,
     paymentId: razorpay_payment_id,
   });
@@ -337,7 +343,7 @@ export default router;
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-11-14T01:46:07.020Z
+                at 2025-12-05T02:37:41.312Z
             </div>
         <script src="../prettify.js"></script>
         <script>

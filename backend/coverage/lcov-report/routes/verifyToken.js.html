@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">34.09% </span>
+                <span class="strong">33.33% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>15/44</span>
+                <span class='fraction'>15/45</span>
             </div>
         
             
@@ -156,7 +156,11 @@
 <a name='L91'></a><a href='#L91'>91</a>
 <a name='L92'></a><a href='#L92'>92</a>
 <a name='L93'></a><a href='#L93'>93</a>
-<a name='L94'></a><a href='#L94'>94</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L94'></a><a href='#L94'>94</a>
+<a name='L95'></a><a href='#L95'>95</a>
+<a name='L96'></a><a href='#L96'>96</a>
+<a name='L97'></a><a href='#L97'>97</a>
+<a name='L98'></a><a href='#L98'>98</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
@@ -165,6 +169,8 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -221,7 +227,6 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">3x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -249,107 +254,114 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">// verifyToken.js - Enhanced for farmer-retailer system
 import jwt from 'jsonwebtoken';
 &nbsp;
 const verifyToken = (req, res, next) =&gt; {
-    const authHeader = req.headers.token;
-    <span class="missing-if-branch" title="if path not taken" >I</span>if (authHeader) {
-        const token = <span class="cstat-no" title="statement not covered" >authHeader.split(" ")[1];</span>
-<span class="cstat-no" title="statement not covered" >        jwt.verify(token, process.env.JWT_SEC, <span class="fstat-no" title="function not covered" >(e</span>rr, user) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >            if (err) <span class="cstat-no" title="statement not covered" >return res.status(403).json("Token is not valid!");</span></span>
-<span class="cstat-no" title="statement not covered" >            req.user = user;</span>
-<span class="cstat-no" title="statement not covered" >            next();</span>
-        });
-    } else {
-        return res.status(401).json("You are not authenticated");
-    }
+  const authHeader = req.headers.token;
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (authHeader) {
+    const token = <span class="cstat-no" title="statement not covered" >authHeader.split(' ')[1];</span>
+<span class="cstat-no" title="statement not covered" >    jwt.verify(token, process.env.JWT_SEC, <span class="fstat-no" title="function not covered" >(e</span>rr, user) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      if (err) {</span>
+<span class="cstat-no" title="statement not covered" >        return res.status(403).json('Token is not valid!');</span>
+      }
+<span class="cstat-no" title="statement not covered" >      req.user = user;</span>
+<span class="cstat-no" title="statement not covered" >      next();</span>
+    });
+  } else {
+    return res.status(401).json('You are not authenticated');
+  }
 };
 &nbsp;
 const verifyTokenAndAuthorization = (req, res, next) =&gt; {
-    verifyToken(req, res, <span class="fstat-no" title="function not covered" >()</span> =&gt; {
-<span class="cstat-no" title="statement not covered" >        if (req.user.id === req.params.userId || req.user.isAdmin) {</span>
-<span class="cstat-no" title="statement not covered" >            next();</span>
-        } else {
-<span class="cstat-no" title="statement not covered" >            res.status(403).json("You are not allowed to do that");</span>
-        }
-    });
+  verifyToken(req, res, <span class="fstat-no" title="function not covered" >()</span> =&gt; {
+<span class="cstat-no" title="statement not covered" >    if (req.user.id === req.params.userId || req.user.isAdmin) {</span>
+<span class="cstat-no" title="statement not covered" >      next();</span>
+    } else {
+<span class="cstat-no" title="statement not covered" >      res.status(403).json('You are not allowed to do that');</span>
+    }
+  });
 };
 &nbsp;
 const verifyTokenAndAdmin = (req, res, next) =&gt; {
-    verifyToken(req, res, <span class="fstat-no" title="function not covered" >()</span> =&gt; {
-<span class="cstat-no" title="statement not covered" >        if (req.user.isAdmin) {</span>
-<span class="cstat-no" title="statement not covered" >            next();</span>
-        } else {
-<span class="cstat-no" title="statement not covered" >            res.status(403).json("You are not allowed to do that");</span>
-        }
-    });
+  verifyToken(req, res, <span class="fstat-no" title="function not covered" >()</span> =&gt; {
+<span class="cstat-no" title="statement not covered" >    if (req.user.isAdmin) {</span>
+<span class="cstat-no" title="statement not covered" >      next();</span>
+    } else {
+<span class="cstat-no" title="statement not covered" >      res.status(403).json('You are not allowed to do that');</span>
+    }
+  });
 };
 &nbsp;
 // New middleware for farmer verification
 // Enhanced verifyFarmer middleware
 const verifyFarmer = (req, res, next) =&gt; {
-    const token = req.headers.token;
-    console.log('Received token for verification:', token);
-    <span class="missing-if-branch" title="if path not taken" >I</span>if (token) {
-        const accessToken = <span class="cstat-no" title="statement not covered" >token.split(" ")[1];</span>
-<span class="cstat-no" title="statement not covered" >        jwt.verify(accessToken, process.env.JWT_SEC, <span class="fstat-no" title="function not covered" >(e</span>rr, user) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >            if (err) {</span>
-<span class="cstat-no" title="statement not covered" >                console.error('JWT verification error:', err);</span>
-<span class="cstat-no" title="statement not covered" >                res.status(403).json("Token is not valid!");</span>
-            } else {
-<span class="cstat-no" title="statement not covered" >                console.log('Decoded user from JWT:', user);</span>
-<span class="cstat-no" title="statement not covered" >                req.user = user;</span>
-<span class="cstat-no" title="statement not covered" >                if (user.role === "farmer") {</span>
-<span class="cstat-no" title="statement not covered" >                    next();</span>
-                } else {
-<span class="cstat-no" title="statement not covered" >                    res.status(403).json("You are not authorized as farmer!");</span>
-                }
-            }
-        });
-    } else {
-        return res.status(401).json("You are not authenticated!");
-    }
+  const token = req.headers.token;
+  console.log('Received token for verification:', token);
+  <span class="missing-if-branch" title="if path not taken" >I</span>if (token) {
+    const accessToken = <span class="cstat-no" title="statement not covered" >token.split(' ')[1];</span>
+<span class="cstat-no" title="statement not covered" >    jwt.verify(accessToken, process.env.JWT_SEC, <span class="fstat-no" title="function not covered" >(e</span>rr, user) =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >      if (err) {</span>
+<span class="cstat-no" title="statement not covered" >        console.error('JWT verification error:', err);</span>
+<span class="cstat-no" title="statement not covered" >        res.status(403).json('Token is not valid!');</span>
+      } else {
+<span class="cstat-no" title="statement not covered" >        console.log('Decoded user from JWT:', user);</span>
+<span class="cstat-no" title="statement not covered" >        req.user = user;</span>
+<span class="cstat-no" title="statement not covered" >        if (user.role === 'farmer') {</span>
+<span class="cstat-no" title="statement not covered" >          next();</span>
+        } else {
+<span class="cstat-no" title="statement not covered" >          res.status(403).json('You are not authorized as farmer!');</span>
+        }
+      }
+    });
+  } else {
+    return res.status(401).json('You are not authenticated!');
+  }
 };
 &nbsp;
 // New middleware for retailer verification
 const verifyRetailer = <span class="fstat-no" title="function not covered" >(r</span>eq, res, next) =&gt; {
-    
-<span class="cstat-no" title="statement not covered" >    verifyToken(req, res, <span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >        if (req.user.role === 'retailer') {</span>
-<span class="cstat-no" title="statement not covered" >            next();</span>
-        } else {
-<span class="cstat-no" title="statement not covered" >            res.status(403).json("Only retailers can perform this action");</span>
-        }
-    });
+<span class="cstat-no" title="statement not covered" >  verifyToken(req, res, <span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    if (req.user.role === 'retailer') {</span>
+<span class="cstat-no" title="statement not covered" >      next();</span>
+    } else {
+<span class="cstat-no" title="statement not covered" >      res.status(403).json('Only retailers can perform this action');</span>
+    }
+  });
 };
 &nbsp;
 // Verify farmer owns the product
 const verifyFarmerProduct = <span class="fstat-no" title="function not covered" >(r</span>eq, res, next) =&gt; {
-<span class="cstat-no" title="statement not covered" >    verifyToken(req, res, <span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >        if (req.user.userType === 'farmer' || req.user.isAdmin) {</span>
-<span class="cstat-no" title="statement not covered" >            next();</span>
-        } else {
-<span class="cstat-no" title="statement not covered" >            res.status(403).json("Only the farmer who listed this product can modify it");</span>
-        }
-    });
+<span class="cstat-no" title="statement not covered" >  verifyToken(req, res, <span class="fstat-no" title="function not covered" >()</span> =&gt; {</span>
+<span class="cstat-no" title="statement not covered" >    if (req.user.userType === 'farmer' || req.user.isAdmin) {</span>
+<span class="cstat-no" title="statement not covered" >      next();</span>
+    } else {
+<span class="cstat-no" title="statement not covered" >      res</span>
+        .status(403)
+        .json('Only the farmer who listed this product can modify it');
+    }
+  });
 };
 &nbsp;
 export {
-    verifyToken,
-    verifyTokenAndAuthorization,
-    verifyTokenAndAdmin,
-    verifyFarmer,
-    verifyRetailer,
-    verifyFarmerProduct
-};</pre></td></tr></table></pre>
+  verifyToken,
+  verifyTokenAndAuthorization,
+  verifyTokenAndAdmin,
+  verifyFarmer,
+  verifyRetailer,
+  verifyFarmerProduct,
+};
+&nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-11-14T01:46:06.941Z
+                at 2025-12-05T02:37:40.950Z
             </div>
         <script src="../prettify.js"></script>
         <script>

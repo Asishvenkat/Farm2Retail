@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">72.41% </span>
+                <span class="strong">71.42% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>21/29</span>
+                <span class='fraction'>20/28</span>
             </div>
         
             
@@ -145,7 +145,14 @@
 <a name='L80'></a><a href='#L80'>80</a>
 <a name='L81'></a><a href='#L81'>81</a>
 <a name='L82'></a><a href='#L82'>82</a>
-<a name='L83'></a><a href='#L83'>83</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L83'></a><a href='#L83'>83</a>
+<a name='L84'></a><a href='#L84'>84</a>
+<a name='L85'></a><a href='#L85'>85</a>
+<a name='L86'></a><a href='#L86'>86</a>
+<a name='L87'></a><a href='#L87'>87</a>
+<a name='L88'></a><a href='#L88'>88</a>
+<a name='L89'></a><a href='#L89'>89</a>
+<a name='L90'></a><a href='#L90'>90</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -153,11 +160,10 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">5x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -166,7 +172,11 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -200,6 +210,9 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -224,6 +237,7 @@
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -235,9 +249,8 @@ import jwt from 'jsonwebtoken';
 import { authRateLimit } from '../middleware/arcjet.js';
 &nbsp;
 // Middleware wrapper that skips rate limiting in test environment
-const conditionalAuthRateLimit = process.env.NODE_ENV === 'test'
-  ? (req, res, next) =&gt; next()
-  : <span class="branch-1 cbranch-no" title="branch not covered" >authRateLimit;</span>
+const conditionalAuthRateLimit =
+  process.env.NODE_ENV === 'test' ? (req, res, next) =&gt; next() : <span class="branch-1 cbranch-no" title="branch not covered" >authRateLimit;</span>
 &nbsp;
 //REGISTER
 router.post('/register', conditionalAuthRateLimit, async (req, res) =&gt; {
@@ -248,15 +261,19 @@ router.post('/register', conditionalAuthRateLimit, async (req, res) =&gt; {
   }
 &nbsp;
   // For testing, use plain password; in production, encrypt it
-  const encryptedPassword = process.env.NODE_ENV === 'test'
-    ? password
-    : <span class="branch-1 cbranch-no" title="branch not covered" >CryptoJS.AES.encrypt(password, process.env.PASS_SEC || 'default_pass_sec').toString();</span>
+  const encryptedPassword =
+    process.env.NODE_ENV === 'test'
+      ? password
+      : <span class="branch-1 cbranch-no" title="branch not covered" >CryptoJS.AES.encrypt(</span>
+        password,
+        process.env.PASS_SEC || 'default_pass_sec',
+      ).toString();
 &nbsp;
   const newUser = new User({
     username: req.body.username,
     email: req.body.email,
     password: encryptedPassword,
-    role: req.body.role || <span class="branch-1 cbranch-no" title="branch not covered" >'retailer' </span>// Add role support
+    role: req.body.role || <span class="branch-1 cbranch-no" title="branch not covered" >'retailer',</span> // Add role support
   });
 &nbsp;
   try {
@@ -281,7 +298,10 @@ router.post('/login', conditionalAuthRateLimit, async (req, res) =&gt; {
     if (process.env.NODE_ENV === 'test') {
       isPasswordValid = user.password === req.body.password;
     } else <span class="missing-if-branch" title="else path not taken" >E</span>{
-      const hashedPassword = <span class="cstat-no" title="statement not covered" >CryptoJS.AES.decrypt(user.password, process.env.PASS_SEC);</span>
+      const hashedPassword = <span class="cstat-no" title="statement not covered" >CryptoJS.AES.decrypt(</span>
+        user.password,
+        process.env.PASS_SEC,
+      );
       const originalPassword = <span class="cstat-no" title="statement not covered" >hashedPassword.toString(CryptoJS.enc.Utf8);</span>
 <span class="cstat-no" title="statement not covered" >      isPasswordValid = originalPassword === req.body.password;</span>
     }
@@ -295,10 +315,10 @@ router.post('/login', conditionalAuthRateLimit, async (req, res) =&gt; {
         id: user._id,
         username: user.username,
         isAdmin: user.isAdmin,
-        role: user.role // Include role in JWT
+        role: user.role, // Include role in JWT
       },
       process.env.JWT_SEC,
-      { expiresIn: '3d' }
+      { expiresIn: '3d' },
     );
 &nbsp;
     const { password, ...others } = <span class="cstat-no" title="statement not covered" >user._doc;</span>
@@ -309,14 +329,15 @@ router.post('/login', conditionalAuthRateLimit, async (req, res) =&gt; {
   }
 });
 &nbsp;
-export default router;</pre></td></tr></table></pre>
+export default router;
+&nbsp;</pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-11-14T01:46:06.941Z
+                at 2025-12-05T02:37:40.950Z
             </div>
         <script src="../prettify.js"></script>
         <script>
