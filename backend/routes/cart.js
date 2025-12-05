@@ -4,10 +4,8 @@ import {
   verifyTokenAndAuthorization,
   verifyTokenAndAdmin,
 } from './verifyToken.js';
-import CryptoJS from 'crypto-js';
 import express from 'express';
 const router = express.Router();
-import User from '../models/User.js';
 
 //create
 router.post('/', verifyToken, async (req, res) => {
@@ -26,7 +24,7 @@ router.put('/:id', verifyTokenAndAuthorization, async (req, res) => {
     const updatedCart = await Cart.findOneAndUpdate(
       { _id: req.params.id },
       { $set: req.body },
-      { new: true }
+      { new: true },
     );
     res.status(200).json(updatedCart);
   } catch (err) {

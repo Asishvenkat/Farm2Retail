@@ -54,7 +54,7 @@ jest.mock('mongoose', () => ({
       return query;
     };
 
-    Model.find = jest.fn().mockImplementation((filter) => createQuery([]));
+    Model.find = jest.fn().mockImplementation((_filter) => createQuery([]));
     Model.findById = jest.fn().mockResolvedValue(null);
     Model.findByIdAndUpdate = jest.fn().mockResolvedValue({});
     Model.findByIdAndDelete = jest.fn().mockResolvedValue({});

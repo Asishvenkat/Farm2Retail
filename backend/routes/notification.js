@@ -31,7 +31,7 @@ router.get(
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
-  }
+  },
 );
 
 // Mark notification as read
@@ -40,7 +40,7 @@ router.put('/:id/read', verifyToken, async (req, res) => {
     const notification = await Notification.findByIdAndUpdate(
       req.params.id,
       { read: true },
-      { new: true }
+      { new: true },
     );
 
     res.status(200).json(notification);
@@ -57,14 +57,14 @@ router.put(
     try {
       await Notification.updateMany(
         { userId: req.params.userId, read: false },
-        { read: true }
+        { read: true },
       );
 
       res.status(200).json({ message: 'All notifications marked as read' });
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
-  }
+  },
 );
 
 // Create notification (usually called internally)
@@ -104,7 +104,7 @@ router.delete(
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
-  }
+  },
 );
 
 export default router;
