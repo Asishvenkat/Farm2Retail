@@ -13,7 +13,7 @@ const ensureRazorpay = () => {
 
   if (!RAZORPAY_KEY_ID || !RAZORPAY_SECRET) {
     console.warn(
-      'Razorpay credentials are missing. Set RAZORPAY_KEY_ID and RAZORPAY_SECRET in your environment.',
+      'Razorpay credentials are missing. Set RAZORPAY_KEY_ID and RAZORPAY_SECRET in your environment.'
     );
     razorpay = null;
     return null;

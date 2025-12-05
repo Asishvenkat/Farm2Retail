@@ -12,14 +12,14 @@ router.put('/:id', verifyTokenAndAuthorization, async (req, res) => {
   if (req.body.password) {
     req.body.password = CryptoJS.AES.encrypt(
       req.body.password,
-      process.env.PASS_SEC,
+      process.env.PASS_SEC
     ).toString();
   }
   try {
     const updatedUser = await User.findOneAndUpdate(
       { _id: req.params.id },
       { $set: req.body },
-      { new: true },
+      { new: true }
     );
     res.status(200).json(updatedUser);
   } catch (err) {
@@ -42,6 +42,7 @@ router.get('/find/:id', verifyTokenAndAdmin, async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     const { password: _password, ...others } = user._doc;
+    void _password; // omit password from response
     res.status(200).json(others);
   } catch (err) {
     res.status(500).json(err);

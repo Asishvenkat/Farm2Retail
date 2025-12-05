@@ -27,7 +27,7 @@ router.get(
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
-  },
+  }
 );
 
 // Get all conversations for a user
@@ -46,7 +46,7 @@ router.get(
 
       // Ensure unique partners by converting to Set and filtering out the user's own ID
       const conversationPartners = [...new Set([...sent, ...received])].filter(
-        (partnerId) => partnerId.toString() !== userId.toString(),
+        (partnerId) => partnerId.toString() !== userId.toString()
       );
 
       // Get last message for each conversation
@@ -73,7 +73,7 @@ router.get(
             lastMessage,
             unreadCount,
           };
-        }),
+        })
       );
 
       // Sort conversations by most recent message
@@ -89,7 +89,7 @@ router.get(
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
-  },
+  }
 );
 
 // Check if conversation exists between two users
@@ -115,7 +115,7 @@ router.get(
     } catch (err) {
       res.status(500).json({ error: err.message });
     }
-  },
+  }
 );
 
 // Send a message (also handled via socket, but this saves to DB)
@@ -143,7 +143,7 @@ router.post('/', verifyToken, async (req, res) => {
       const io = req.app.get('io');
       io.to(savedMessage.receiverId.toString()).emit(
         'notification:newMessage',
-        notification,
+        notification
       );
     } catch (notifError) {
       console.error('Error creating notification:', notifError);
@@ -171,7 +171,7 @@ router.put('/read/:senderId/:receiverId', verifyToken, async (req, res) => {
       {
         read: true,
         readAt: new Date(),
-      },
+      }
     );
 
     res.status(200).json({ message: 'Messages marked as read' });

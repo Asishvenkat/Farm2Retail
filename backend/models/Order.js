@@ -27,7 +27,7 @@ const OrderSchema = new mongoose.Schema(
     paymentId: { type: String }, // Razorpay payment ID
     orderId: { type: String }, // Razorpay order ID
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 export default mongoose.model('Order', OrderSchema);
