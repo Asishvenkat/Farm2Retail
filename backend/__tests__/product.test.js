@@ -63,7 +63,7 @@ describe('Product API Tests', () => {
       Product.find = jest.fn().mockReturnValue(mockQuery);
 
       const response = await request(app).get(
-        '/api/products?category=vegetables',
+        '/api/products?category=vegetables'
       );
 
       expect(response.status).toBe(200);

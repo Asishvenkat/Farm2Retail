@@ -14,7 +14,7 @@ const UserSchema = new mongoose.Schema(
     isAdmin: { type: Boolean, default: false },
     img: { type: String },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 export default mongoose.model('User', UserSchema);

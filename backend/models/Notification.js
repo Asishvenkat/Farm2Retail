@@ -44,7 +44,7 @@ const NotificationSchema = new mongoose.Schema(
       default: '',
     },
   },
-  { timestamps: true },
+  { timestamps: true }
 );
 
 // Index for faster queries

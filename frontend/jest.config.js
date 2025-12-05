@@ -7,9 +7,7 @@ export default {
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': ['@swc/jest', {}],
   },
-  transformIgnorePatterns: [
-    'node_modules/(?!(socket.io-client|@reduxjs)/)',
-  ],
+  transformIgnorePatterns: ['node_modules/(?!(socket.io-client|@reduxjs)/)'],
   testMatch: [
     '<rootDir>/src/**/__tests__/**/*.(js|jsx|ts|tsx)',
     '<rootDir>/src/**/*.(test|spec).(js|jsx|ts|tsx)',

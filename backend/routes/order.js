@@ -86,7 +86,7 @@ router.put('/:id', verifyTokenAndAdmin, async (req, res) => {
     const updatedOrder = await Order.findOneAndUpdate(
       { _id: req.params.id },
       { $set: req.body },
-      { new: true },
+      { new: true }
     );
 
     // Check if status changed and notify retailer
@@ -96,22 +96,22 @@ router.put('/:id', verifyTokenAndAdmin, async (req, res) => {
         let statusEmoji = '';
 
         switch (req.body.status.toLowerCase()) {
-        case 'completed':
-        case 'delivered':
-          statusMessage = 'Your order has been delivered successfully!';
-          statusEmoji = '✅';
-          break;
-        case 'cancelled':
-          statusMessage = 'Your order has been cancelled.';
-          statusEmoji = '❌';
-          break;
-        case 'pending':
-          statusMessage = 'Your order is being processed.';
-          statusEmoji = '⏳';
-          break;
-        default:
-          statusMessage = `Your order status has been updated to: ${req.body.status}`;
-          statusEmoji = '📦';
+          case 'completed':
+          case 'delivered':
+            statusMessage = 'Your order has been delivered successfully!';
+            statusEmoji = '✅';
+            break;
+          case 'cancelled':
+            statusMessage = 'Your order has been cancelled.';
+            statusEmoji = '❌';
+            break;
+          case 'pending':
+            statusMessage = 'Your order is being processed.';
+            statusEmoji = '⏳';
+            break;
+          default:
+            statusMessage = `Your order status has been updated to: ${req.body.status}`;
+            statusEmoji = '📦';
         }
 
         const notification = new Notification({
@@ -197,7 +197,7 @@ router.get('/farmer/:farmerId', async (req, res) => {
               'Farmer ID:',
               product.farmerId,
               'Match:',
-              product.farmerId === req.params.farmerId,
+              product.farmerId === req.params.farmerId
             );
 
             // Check if this product belongs to the farmer
@@ -236,11 +236,11 @@ router.get('/farmer/:farmerId', async (req, res) => {
             products: populatedProducts,
             customer: customer
               ? {
-                _id: customer._id,
-                username: customer.username,
-                email: customer.email,
-                phone: customer.phone,
-              }
+                  _id: customer._id,
+                  username: customer.username,
+                  email: customer.email,
+                  phone: customer.phone,
+                }
               : null,
           });
         } catch (err) {

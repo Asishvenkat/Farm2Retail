@@ -47,7 +47,7 @@ router.put('/:id', verifyFarmer, async (req, res) => {
     await Product.findByIdAndUpdate(
       req.params.id,
       { $set: req.body },
-      { runValidators: true },
+      { runValidators: true }
     );
 
     // Fetch the updated product fresh from database
