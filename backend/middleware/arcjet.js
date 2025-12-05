@@ -37,7 +37,7 @@ if (ARCJET_KEY) {
   });
 } else {
   console.warn(
-    'Arcjet key is missing. Set ARCJET_KEY in your environment to enable Arcjet protection.'
+    'Arcjet key is missing. Set ARCJET_KEY in your environment to enable Arcjet protection.',
   );
 }
 

@@ -24,7 +24,7 @@ router.put('/:id', verifyTokenAndAuthorization, async (req, res) => {
     const updatedCart = await Cart.findOneAndUpdate(
       { _id: req.params.id },
       { $set: req.body },
-      { new: true }
+      { new: true },
     );
     res.status(200).json(updatedCart);
   } catch (err) {

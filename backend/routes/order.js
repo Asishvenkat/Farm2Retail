@@ -85,7 +85,7 @@ router.put('/:id', verifyTokenAndAdmin, async (req, res) => {
     const updatedOrder = await Order.findOneAndUpdate(
       { _id: req.params.id },
       { $set: req.body },
-      { new: true }
+      { new: true },
     );
 
     // Check if status changed and notify retailer
@@ -196,7 +196,7 @@ router.get('/farmer/:farmerId', async (req, res) => {
               'Farmer ID:',
               product.farmerId,
               'Match:',
-              product.farmerId === req.params.farmerId
+              product.farmerId === req.params.farmerId,
             );
 
             // Check if this product belongs to the farmer

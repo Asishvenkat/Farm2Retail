@@ -23,7 +23,7 @@ router.post('/register', conditionalAuthRateLimit, async (req, res) => {
       ? password
       : CryptoJS.AES.encrypt(
           password,
-          process.env.PASS_SEC || 'default_pass_sec'
+          process.env.PASS_SEC || 'default_pass_sec',
         ).toString();
 
   const newUser = new User({
@@ -57,7 +57,7 @@ router.post('/login', conditionalAuthRateLimit, async (req, res) => {
     } else {
       const hashedPassword = CryptoJS.AES.decrypt(
         user.password,
-        process.env.PASS_SEC
+        process.env.PASS_SEC,
       );
       const originalPassword = hashedPassword.toString(CryptoJS.enc.Utf8);
       isPasswordValid = originalPassword === req.body.password;
@@ -75,7 +75,7 @@ router.post('/login', conditionalAuthRateLimit, async (req, res) => {
         role: user.role, // Include role in JWT
       },
       process.env.JWT_SEC,
-      { expiresIn: '3d' }
+      { expiresIn: '3d' },
     );
 
     const { password: _password, ...others } = user._doc;
