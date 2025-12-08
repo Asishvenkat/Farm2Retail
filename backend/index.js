@@ -19,19 +19,23 @@ import messageRoute from './routes/message.js';
 const app = express();
 const server = http.createServer(app);
 
+const vercelRegex = /^https?:\/\/([a-zA-Z0-9-]+\.)*vercel\.app$/;
+
 const io = new Server(server, {
   cors: {
-    origin: [
-      'https://farm2retail.vercel.app',
-      'https://farm2retail-admin-panel.vercel.app',
-      'http://localhost:5173',
-      'http://localhost:5174',
-      'http://localhost:3000',
-    ],
+    origin: (origin, callback) => {
+      if (!origin || vercelRegex.test(origin) || origin.startsWith('http://localhost:')) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by Socket.io CORS'));
+      }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   },
 });
+
+
 
 app.set('io', io);
 
@@ -43,8 +47,8 @@ app.use(
         styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
         fontSrc: ["'self'", 'https://fonts.gstatic.com'],
         imgSrc: ["'self'", 'data:', 'https://res.cloudinary.com'],
-        scriptSrc: ["'self'"],
-        connectSrc: ["'self'", 'ws:', 'wss:'],
+        scriptSrc: ["'self'", 'https://*.vercel.app'],
+        connectSrc: ["'self'", 'ws:', 'wss:', 'https://*.vercel.app'],
       },
     },
     crossOriginEmbedderPolicy: false,
@@ -54,13 +58,19 @@ app.use(
 // Middleware
 app.use(
   cors({
-    origin: [
-      'https://farm2retail.vercel.app',
-      'https://farm2retail-admin-panel.vercel.app',
-      'http://localhost:5173',
-      'http://localhost:5174',
-      'http://localhost:3000',
-    ],
+    origin: (origin, callback) => {
+      // Allow any vercel.app subdomain and localhost for dev
+      const vercelRegex = /^https?:\/\/[a-zA-Z0-9-]+\.vercel\.app$/;
+      if (
+        !origin ||
+        vercelRegex.test(origin) ||
+        origin.startsWith('http://localhost:')
+      ) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'token'],
