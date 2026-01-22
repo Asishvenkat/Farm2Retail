@@ -19,14 +19,30 @@ import messageRoute from './routes/message.js';
 const app = express();
 const server = http.createServer(app);
 
-const vercelRegex = /^https?:\/\/([a-zA-Z0-9-]+\.)*vercel\.app$/;
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  'https://farm2-retail.vercel.app',
+  /^https?:\/\/[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\.vercel\.app$/,
+];
 
 const io = new Server(server, {
   cors: {
     origin: (origin, callback) => {
-      if (!origin || vercelRegex.test(origin) || origin.startsWith('http://localhost:')) {
+      if (!origin) return callback(null, true);
+      if (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
+        return callback(null, true);
+      }
+      
+      const isAllowed = allowedOrigins.some((allowed) => {
+        if (typeof allowed === 'string') return origin === allowed;
+        if (allowed instanceof RegExp) return allowed.test(origin);
+        return false;
+      });
+      
+      if (isAllowed) {
         callback(null, true);
       } else {
+        console.error(`❌ Socket.io CORS blocked: ${origin}`);
         callback(new Error('Not allowed by Socket.io CORS'));
       }
     },
@@ -59,15 +75,21 @@ app.use(
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow any vercel.app subdomain and localhost for dev
-      const vercelRegex = /^https?:\/\/[a-zA-Z0-9-]+\.vercel\.app$/;
-      if (
-        !origin ||
-        vercelRegex.test(origin) ||
-        origin.startsWith('http://localhost:')
-      ) {
+      if (!origin) return callback(null, true);
+      if (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
+        return callback(null, true);
+      }
+      
+      const isAllowed = allowedOrigins.some((allowed) => {
+        if (typeof allowed === 'string') return origin === allowed;
+        if (allowed instanceof RegExp) return allowed.test(origin);
+        return false;
+      });
+      
+      if (isAllowed) {
         callback(null, true);
       } else {
+        console.error(`❌ CORS blocked: ${origin}`);
         callback(new Error('Not allowed by CORS'));
       }
     },
