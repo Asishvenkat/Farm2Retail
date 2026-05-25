@@ -20,6 +20,7 @@ import axios from 'axios';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import socketService from '../../socketService';
+import { getCachedRequest } from '../../utils/requestCache';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -40,9 +41,19 @@ const ProductDetail = () => {
   const fetchProduct = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${BASE_URL}products/${id}`);
-      if (!res.ok) throw new Error('Product not found');
-      const data = await res.json();
+      const data = await getCachedRequest(
+        `product:${id}`,
+        async () => {
+          const res = await fetch(`${BASE_URL}products/${id}`);
+          if (!res.ok) {
+            throw new Error('Product not found');
+          }
+          return res.json();
+        },
+        {
+          ttl: 60000,
+        },
+      );
       setProduct(data);
     } catch {
       setError('Failed to fetch product details');

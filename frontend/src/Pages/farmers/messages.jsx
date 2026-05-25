@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import { MessageCircle, User } from 'lucide-react';
 import Navbar from '../../components/Navbar';
@@ -16,34 +16,43 @@ const Messages = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const user = useSelector((state) => state.user.currentUser);
+  const selectedChatRef = useRef(null);
 
   useEffect(() => {
-    if (user) {
-      socketService.connect(user._id);
-      loadConversations();
+    selectedChatRef.current = selectedChat;
+  }, [selectedChat]);
 
-      // Listen for new messages
-      socketService.onChatMessage((data) => {
-        if (selectedChat && data.senderId === selectedChat.userId) {
-          setMessages((prev) => [
-            ...prev,
-            {
-              senderId: data.senderId,
-              message: data.message,
-              timestamp: data.timestamp,
-              isMine: false,
-            },
-          ]);
-        }
-        // Refresh conversations to show new message indicator
-        loadConversations();
-      });
+  useEffect(() => {
+    if (!user?._id) {
+      return undefined;
     }
 
-    return () => {
-      socketService.removeAllListeners();
+    socketService.connect(user._id);
+    loadConversations();
+
+    const handleChatMessage = (data) => {
+      const activeChat = selectedChatRef.current;
+      if (activeChat && data.senderId === activeChat.userId) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            senderId: data.senderId,
+            message: data.message,
+            timestamp: data.timestamp,
+            isMine: false,
+          },
+        ]);
+      }
+
+      loadConversations();
     };
-  }, [user, selectedChat]);
+
+    socketService.onChatMessage(handleChatMessage);
+
+    return () => {
+      socketService.off('chat:receiveMessage', handleChatMessage);
+    };
+  }, [user?._id]);
 
   const loadConversations = async () => {
     try {

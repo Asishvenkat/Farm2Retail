@@ -14,6 +14,7 @@ import Notifications from './Notifications';
 import socketService from '../socketService';
 import axios from 'axios';
 import { BASE_URL } from '../requestMethods';
+import { getCachedRequest } from '../utils/requestCache';
 
 // Styled Components
 const Container = styled.div`
@@ -147,56 +148,64 @@ const Navbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Connect to WebSocket when user logs in
-  useEffect(() => {
-    if (user) {
-      socketService.connect(user._id);
-      fetchUnreadCount();
-    }
-    return () => {
-      if (user) {
-        socketService.disconnect();
-      }
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user]);
-
-  // Listen for new messages to update unread count
-  useEffect(() => {
-    if (user) {
-      const handleNewMessage = (data) => {
-        // Only increment if the message is for this user
-        if (data.receiverId === user._id) {
-          setUnreadMessageCount((prev) => prev + 1);
-        }
-      };
-
-      socketService.on('chat:receiveMessage', handleNewMessage);
-
-      return () => {
-        socketService.off('chat:receiveMessage');
-      };
-    }
-  }, [user]);
-
-  const fetchUnreadCount = async () => {
-    if (!user) return;
+  const fetchUnreadCount = async (force = false) => {
+    if (!user?._id || !user?.accessToken) return;
 
     try {
-      const token = user.accessToken;
-      const response = await axios.get(
-        `${BASE_URL}messages/unread/${user._id}`,
+      const response = await getCachedRequest(
+        `messages:unread:${user._id}`,
+        async () => {
+          const result = await axios.get(`${BASE_URL}messages/unread/${user._id}`, {
+            headers: {
+              token: `Bearer ${user.accessToken}`,
+            },
+          });
+          return result.data;
+        },
         {
-          headers: {
-            token: `Bearer ${token}`,
-          },
-        }
+          force,
+          ttl: 15000,
+        },
       );
-      setUnreadMessageCount(response.data.count || 0);
+
+      setUnreadMessageCount(response.count || 0);
     } catch (error) {
       console.error('Error fetching unread count:', error);
     }
   };
+
+  useEffect(() => {
+    if (!user?._id) {
+      setUnreadMessageCount(0);
+      if (socketService.isConnected()) {
+        socketService.disconnect();
+      }
+      return;
+    }
+
+    socketService.connect(user._id);
+    fetchUnreadCount();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?._id, user?.accessToken]);
+
+  // Listen for new messages to update unread count
+  useEffect(() => {
+    if (!user?._id) {
+      return undefined;
+    }
+
+    const handleNewMessage = (data) => {
+      if (data.receiverId === user._id) {
+        setUnreadMessageCount((prev) => prev + 1);
+      }
+    };
+
+    socketService.on('chat:receiveMessage', handleNewMessage);
+
+    return () => {
+      socketService.off('chat:receiveMessage', handleNewMessage);
+    };
+  }, [user?._id]);
 
   const handleLogout = () => {
     dispatch(logout());

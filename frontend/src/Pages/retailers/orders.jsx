@@ -6,6 +6,7 @@ import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import { mobile } from '../../responsive';
 import { format } from 'date-fns';
+import { getCachedRequest } from '../../utils/requestCache';
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL;
@@ -179,37 +180,64 @@ const Orders = () => {
         headers: { token: `Bearer ${token}` },
       });
 
+      const uniqueProductIds = [
+        ...new Set(
+          res.data.flatMap((order) =>
+            order.products.map((item) => String(item.productId)),
+          ),
+        ),
+      ];
+
+      const productEntries = await Promise.all(
+        uniqueProductIds.map(async (productId) => {
+          try {
+            const data = await getCachedRequest(
+              `product:${productId}`,
+              async () => {
+                const pRes = await axios.get(`${API_BASE_URL}products/${productId}`);
+                return pRes.data;
+              },
+              {
+                ttl: 60000,
+              },
+            );
+
+            return [productId, data];
+          } catch {
+            return [
+              productId,
+              {
+                _id: productId,
+                title: 'Product Not Available',
+                img: null,
+                notFound: true,
+              },
+            ];
+          }
+        }),
+      );
+
+      const productMap = new Map(productEntries);
+
       const enrichedOrders = await Promise.all(
         res.data.map(async (order) => {
-          const products = await Promise.all(
-            order.products.map(async (item) => {
-              try {
-                const pRes = await axios.get(
-                  `${API_BASE_URL}products/${item.productId}`
-                );
-                const data = pRes.data;
-                return {
-                  _id: data._id,
-                  title: data.name || data.title || 'Unknown Product',
-                  img: data.images?.[0] || data.img,
-                  price: data.price,
-                  quantity: item.quantity,
-                  category: data.category,
-                  unit: data.unit,
-                };
-              } catch {
-                return {
-                  _id: item.productId,
-                  title: 'Product Not Available',
-                  img: null,
-                  quantity: item.quantity,
-                  notFound: true,
-                };
-              }
-            })
-          );
+          const products = order.products.map((item) => {
+            const data = productMap.get(String(item.productId));
+
+            return {
+              _id: data?._id || item.productId,
+              title: data?.name || data?.title || 'Unknown Product',
+              img: data?.images?.[0] || data?.img || null,
+              price: data?.price,
+              quantity: item.quantity,
+              category: data?.category,
+              unit: data?.unit,
+              notFound: data?.notFound || false,
+            };
+          });
+
           return { ...order, products };
-        })
+        }),
       );
 
       setOrders(
@@ -227,7 +255,7 @@ const Orders = () => {
 
   useEffect(() => {
     fetchOrders();
-  }, [user, token]);
+  }, [user?._id, token]);
 
   const totalPrice = (p) => (p.price || 0) * (p.quantity || 1);
 

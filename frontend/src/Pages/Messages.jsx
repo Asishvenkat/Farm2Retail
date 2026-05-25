@@ -336,6 +336,7 @@ const Messages = () => {
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const messagesEndRef = useRef(null);
+  const selectedConversationRef = useRef(null);
 
   // Helper function to get authenticated headers
   const getAuthHeaders = () => {
@@ -355,6 +356,49 @@ const Messages = () => {
         inline: 'nearest',
       });
     }
+  };
+
+  useEffect(() => {
+    selectedConversationRef.current = selectedConversation;
+  }, [selectedConversation]);
+
+  const upsertConversation = (
+    partnerId,
+    userName,
+    lastMessage,
+    { incrementUnread = false } = {},
+  ) => {
+    setConversations((prev) => {
+      const next = [...prev];
+      const existingIndex = next.findIndex((item) => item.userId === partnerId);
+
+      if (existingIndex >= 0) {
+        const existingConversation = next[existingIndex];
+        const updatedConversation = {
+          ...existingConversation,
+          userName: userName || existingConversation.userName,
+          lastMessage,
+          unreadCount: incrementUnread
+            ? (existingConversation.unreadCount || 0) + 1
+            : 0,
+        };
+
+        next.splice(existingIndex, 1);
+        next.unshift(updatedConversation);
+        return next;
+      }
+
+      return [
+        {
+          userId: partnerId,
+          userName: userName || 'Unknown User',
+          userType: 'user',
+          lastMessage,
+          unreadCount: incrementUnread ? 1 : 0,
+        },
+        ...next,
+      ];
+    });
   };
 
   const fetchConversations = async () => {
@@ -442,8 +486,13 @@ const Messages = () => {
       // Mark messages as read
       await markAsRead(otherUserId);
 
-      // Update conversations to reflect read status
-      fetchConversations();
+      setConversations((prev) =>
+        prev.map((conversation) =>
+          conversation.userId === otherUserId
+            ? { ...conversation, unreadCount: 0 }
+            : conversation,
+        ),
+      );
     } catch (err) {
       console.error('Error fetching messages:', err);
       alert('Failed to load conversation. Please try again.');
@@ -468,28 +517,29 @@ const Messages = () => {
       return;
     }
 
-    // Connect to socket
-    socketService.connect();
-    socketService.joinUser(user._id);
+    socketService.connect(user._id);
 
-    // Listen for new messages
     const handleNewMessage = (data) => {
+      const activeConversation = selectedConversationRef.current;
+      const isActiveConversation =
+        activeConversation &&
+        (data.senderId === activeConversation.userId ||
+          data.receiverId === activeConversation.userId);
+
       if (
-        selectedConversation &&
-        (data.senderId === selectedConversation.userId ||
-          data.receiverId === selectedConversation.userId)
+        isActiveConversation
       ) {
         setMessages((prev) => [...prev, data]);
         scrollToBottom();
 
-        // Mark as read if conversation is open
-        if (data.senderId === selectedConversation.userId) {
+        if (data.senderId === activeConversation.userId) {
           markAsRead(data.senderId);
         }
       }
 
-      // Update conversations list
-      fetchConversations();
+      upsertConversation(data.senderId, data.senderName, data.message, {
+        incrementUnread: !isActiveConversation,
+      });
     };
 
     socketService.on('chat:receiveMessage', handleNewMessage);
@@ -497,10 +547,10 @@ const Messages = () => {
     fetchConversations();
 
     return () => {
-      socketService.off('chat:receiveMessage');
+      socketService.off('chat:receiveMessage', handleNewMessage);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, navigate, selectedConversation]);
+  }, [user, navigate, location.state?.selectedUserId]);
 
   useEffect(() => {
     scrollToBottom();
@@ -529,6 +579,11 @@ const Messages = () => {
         ...prev,
         { ...messageData, _id: Date.now().toString() },
       ]);
+      upsertConversation(
+        selectedConversation.userId,
+        selectedConversation.userName,
+        messageData.message,
+      );
       setNewMessage('');
       scrollToBottom();
     } catch (error) {

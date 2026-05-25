@@ -186,41 +186,41 @@ const Chat = ({ recipientId, recipientName }) => {
   const user = useSelector((state) => state.user.currentUser);
 
   useEffect(() => {
-    if (user && recipientId) {
-      // Connect socket
-      socketService.connect(user._id);
-
-      // Load conversation
-      loadConversation();
-
-      // Listen for incoming messages
-      socketService.onChatMessage((data) => {
-        if (data.senderId === recipientId) {
-          setMessages((prev) => [
-            ...prev,
-            {
-              senderId: data.senderId,
-              message: data.message,
-              timestamp: data.timestamp,
-              isMine: false,
-            },
-          ]);
-        }
-      });
-
-      // Listen for typing indicator
-      socketService.onUserTyping((data) => {
-        if (data.userId === recipientId) {
-          setIsTyping(data.isTyping);
-        }
-      });
-
-      return () => {
-        socketService.off('chat:receiveMessage');
-        socketService.off('chat:userTyping');
-      };
+    if (!user || !recipientId || !showChat) {
+      return undefined;
     }
-  }, [user, recipientId]);
+
+    socketService.connect(user._id);
+    loadConversation();
+
+    const handleChatMessage = (data) => {
+      if (data.senderId === recipientId) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            senderId: data.senderId,
+            message: data.message,
+            timestamp: data.timestamp,
+            isMine: false,
+          },
+        ]);
+      }
+    };
+
+    const handleTyping = (data) => {
+      if (data.userId === recipientId) {
+        setIsTyping(data.isTyping);
+      }
+    };
+
+    socketService.onChatMessage(handleChatMessage);
+    socketService.onUserTyping(handleTyping);
+
+    return () => {
+      socketService.off('chat:receiveMessage', handleChatMessage);
+      socketService.off('chat:userTyping', handleTyping);
+    };
+  }, [showChat, user, recipientId]);
 
   useEffect(() => {
     scrollToBottom();

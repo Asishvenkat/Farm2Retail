@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDebounce } from 'use-debounce';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
+import { getCachedRequest } from '../../utils/requestCache';
 
 // Constants
 const categories = [
@@ -98,27 +99,39 @@ const ProductsListing = () => {
       const params = new URLSearchParams();
       if (filters.category) params.append('category', filters.category);
       if (filters.priceRange) params.append('priceRange', filters.priceRange);
+      const requestUrl = `${BASE_URL}products?${params}`;
 
-      const response = await fetch(`${BASE_URL}products?${params}`, {
-        method: 'GET',
-        headers: {
-          token: `Bearer ${token}`,
-          'Content-Type': 'application/json',
+      const data = await getCachedRequest(
+        `retailer-products:${params.toString() || 'all'}`,
+        async () => {
+          const response = await fetch(requestUrl, {
+            method: 'GET',
+            headers: {
+              token: `Bearer ${token}`,
+              'Content-Type': 'application/json',
+            },
+          });
+
+          if (!response.ok) {
+            if (response.status === 401) {
+              throw new Error('Session expired. Please login again.');
+            }
+
+            throw new Error(`HTTP error! status: ${response.status}`);
+          }
+
+          return response.json();
         },
-      });
+        {
+          ttl: 30000,
+        },
+      );
 
-      if (!response.ok) {
-        if (response.status === 401)
-          return setError('Session expired. Please login again.');
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
       setProducts(data);
       setFilteredProducts(data);
     } catch (err) {
       console.error(err);
-      setError('Failed to fetch products. Please try again.');
+      setError(err.message || 'Failed to fetch products. Please try again.');
     } finally {
       setLoading(false);
     }

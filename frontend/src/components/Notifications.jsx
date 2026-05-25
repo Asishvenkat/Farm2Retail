@@ -5,6 +5,10 @@ import socketService from '../socketService';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { formatDistanceToNow } from 'date-fns';
+import {
+  getCachedRequest,
+  invalidateCachedRequest,
+} from '../utils/requestCache';
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL;
@@ -177,133 +181,162 @@ const Notifications = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const user = useSelector((state) => state.user.currentUser);
 
-  useEffect(() => {
-    if (user) {
-      // Connect to socket
-      socketService.connect(user._id);
+  const applyNotifications = (items) => {
+    const filteredNotifications = items.filter((n) => n.type !== 'NEW_MESSAGE');
+    setNotifications(filteredNotifications);
+    setUnreadCount(filteredNotifications.filter((n) => !n.read).length);
+  };
 
-      // Fetch existing notifications
-      fetchNotifications();
-
-      // Listen for new notifications
-      socketService.onNotification((notification) => {
-        setNotifications((prev) => [notification, ...prev]);
-        setUnreadCount((prev) => prev + 1);
-
-        // Show browser notification if permitted
-        if (Notification.permission === 'granted') {
-          new Notification(notification.message, {
-            icon: '/logo.png',
-            body: notification.message,
-          });
-        }
-      });
-
-      // Request notification permission
-      if (Notification.permission === 'default') {
-        Notification.requestPermission();
-      }
+  const normalizeIncomingNotification = (payload) => {
+    if (!payload) {
+      return null;
     }
 
-    return () => {
-      socketService.removeAllListeners();
-    };
-  }, [user]);
+    const notification = payload.notification || payload;
+    const targetUserId = payload.userId || notification.userId;
 
-  const fetchNotifications = async () => {
+    if (targetUserId && String(targetUserId) !== String(user?._id)) {
+      return null;
+    }
+
+    return notification;
+  };
+
+  const fetchNotifications = async (force = false) => {
+    if (!user?._id || !user?.accessToken) {
+      setNotifications([]);
+      setUnreadCount(0);
+      return;
+    }
+
     try {
-      const token = JSON.parse(localStorage.getItem('persist:root'))?.user;
-      const currentUser = token ? JSON.parse(token).currentUser : null;
+      const data = await getCachedRequest(
+        `notifications:list:${user._id}`,
+        async () => {
+          const res = await axios.get(`${API_BASE_URL}notifications/${user._id}`, {
+            headers: { token: `Bearer ${user.accessToken}` },
+          });
+          return res.data;
+        },
+        {
+          force,
+          ttl: 30000,
+        },
+      );
 
-      if (currentUser) {
-        const res = await axios.get(
-          `${API_BASE_URL}notifications/${currentUser._id}`,
-          {
-            headers: { token: `Bearer ${currentUser.accessToken}` },
-          }
-        );
-        // Filter out NEW_MESSAGE notifications (they appear in message icon)
-        const filteredNotifications = res.data.filter(
-          (n) => n.type !== 'NEW_MESSAGE'
-        );
-        setNotifications(filteredNotifications);
-
-        const unread = filteredNotifications.filter((n) => !n.read).length;
-        setUnreadCount(unread);
-      }
+      applyNotifications(data);
     } catch (error) {
       console.error('Error fetching notifications:', error);
     }
   };
 
-  const markAsRead = async (notificationId) => {
-    try {
-      const token = JSON.parse(localStorage.getItem('persist:root'))?.user;
-      const currentUser = token ? JSON.parse(token).currentUser : null;
+  useEffect(() => {
+    if (!user?._id) {
+      setNotifications([]);
+      setUnreadCount(0);
+      return;
+    }
 
-      if (currentUser) {
-        await axios.put(
-          `${API_BASE_URL}notifications/${notificationId}/read`,
-          {},
-          {
-            headers: { token: `Bearer ${currentUser.accessToken}` },
-          }
-        );
+    socketService.connect(user._id);
+    fetchNotifications();
 
-        setNotifications((prev) =>
-          prev.map((n) => (n._id === notificationId ? { ...n, read: true } : n))
-        );
-        setUnreadCount((prev) => Math.max(0, prev - 1));
+    const handleNotification = (payload) => {
+      const notification = normalizeIncomingNotification(payload);
+
+      if (!notification) {
+        return;
       }
+
+      if (notification.type === 'NEW_MESSAGE') {
+        return;
+      }
+
+      invalidateCachedRequest(`notifications:list:${user._id}`);
+      setNotifications((prev) => [notification, ...prev]);
+      setUnreadCount((prev) => prev + 1);
+
+      if (Notification.permission === 'granted') {
+        new Notification(notification.message, {
+          icon: '/logo.png',
+          body: notification.message,
+        });
+      }
+    };
+
+    socketService.onNotification(handleNotification);
+
+    if (Notification.permission === 'default') {
+      Notification.requestPermission();
+    }
+
+    return () => {
+      socketService.offNotification(handleNotification);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?._id, user?.accessToken]);
+
+  const markAsRead = async (notificationId) => {
+    if (!user?._id || !user?.accessToken) {
+      return;
+    }
+
+    try {
+      await axios.put(
+        `${API_BASE_URL}notifications/${notificationId}/read`,
+        {},
+        {
+          headers: { token: `Bearer ${user.accessToken}` },
+        },
+      );
+
+      invalidateCachedRequest(`notifications:list:${user._id}`);
+      setNotifications((prev) =>
+        prev.map((n) => (n._id === notificationId ? { ...n, read: true } : n)),
+      );
+      setUnreadCount((prev) => Math.max(0, prev - 1));
     } catch (error) {
       console.error('Error marking notification as read:', error);
     }
   };
 
   const markAllAsRead = async () => {
+    if (!user?._id || !user?.accessToken) {
+      return;
+    }
+
     try {
-      const token = JSON.parse(localStorage.getItem('persist:root'))?.user;
-      const currentUser = token ? JSON.parse(token).currentUser : null;
+      await axios.put(
+        `${API_BASE_URL}notifications/${user._id}/read-all`,
+        {},
+        {
+          headers: { token: `Bearer ${user.accessToken}` },
+        },
+      );
 
-      if (currentUser) {
-        await axios.put(
-          `${API_BASE_URL}notifications/${currentUser._id}/read-all`,
-          {},
-          {
-            headers: { token: `Bearer ${currentUser.accessToken}` },
-          }
-        );
-
-        setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
-        setUnreadCount(0);
-      }
+      invalidateCachedRequest(`notifications:list:${user._id}`);
+      setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+      setUnreadCount(0);
     } catch (error) {
       console.error('Error marking all as read:', error);
     }
   };
 
   const deleteNotification = async (notificationId) => {
+    if (!user?._id || !user?.accessToken) {
+      return;
+    }
+
     try {
-      const token = JSON.parse(localStorage.getItem('persist:root'))?.user;
-      const currentUser = token ? JSON.parse(token).currentUser : null;
+      await axios.delete(`${API_BASE_URL}notifications/${notificationId}`, {
+        headers: { token: `Bearer ${user.accessToken}` },
+      });
 
-      if (currentUser) {
-        await axios.delete(`${API_BASE_URL}notifications/${notificationId}`, {
-          headers: { token: `Bearer ${currentUser.accessToken}` },
-        });
+      invalidateCachedRequest(`notifications:list:${user._id}`);
+      setNotifications((prev) => prev.filter((n) => n._id !== notificationId));
 
-        // Remove notification from state
-        setNotifications((prev) =>
-          prev.filter((n) => n._id !== notificationId)
-        );
-
-        // Update unread count if notification was unread
-        const notification = notifications.find(
-          (n) => n._id === notificationId
-        );
-        if (notification && !notification.read) {
-          setUnreadCount((prev) => Math.max(0, prev - 1));
-        }
+      const notification = notifications.find((n) => n._id === notificationId);
+      if (notification && !notification.read) {
+        setUnreadCount((prev) => Math.max(0, prev - 1));
       }
     } catch (error) {
       console.error('Error deleting notification:', error);

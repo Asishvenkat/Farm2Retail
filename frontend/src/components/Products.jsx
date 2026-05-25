@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { mobile } from '../responsive';
+import { getCachedRequest } from '../utils/requestCache';
 
 const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL;
@@ -89,19 +90,38 @@ const Products = ({ cat, filters, sort }) => {
   const [filteredProducts, setFilteredProducts] = useState([]);
 
   useEffect(() => {
+    let isMounted = true;
+
     const getProducts = async () => {
       try {
-        const res = await axios.get(
-          cat
-            ? `${API_BASE_URL}products?category=${cat}`
-            : `${API_BASE_URL}products`
+        const url = cat
+          ? `${API_BASE_URL}products?category=${cat}`
+          : `${API_BASE_URL}products`;
+
+        const data = await getCachedRequest(
+          `products:list:${cat || 'all'}`,
+          async () => {
+            const res = await axios.get(url);
+            return res.data;
+          },
+          {
+            ttl: 30000,
+          },
         );
-        setProducts(res.data);
+
+        if (isMounted) {
+          setProducts(data);
+        }
       } catch (err) {
         console.error('Error fetching products:', err);
       }
     };
+
     getProducts();
+
+    return () => {
+      isMounted = false;
+    };
   }, [cat]);
 
   useEffect(() => {
