@@ -78,6 +78,7 @@ ARCJET_ENV=development
 
 # Server
 PORT=5000
+CORS_ORIGINS=http://localhost:5174,https://farm2-retail.vercel.app
 ```
 
 4. Start the development server:

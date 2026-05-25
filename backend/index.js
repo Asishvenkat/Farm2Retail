@@ -21,45 +21,41 @@ const server = http.createServer(app);
 
 app.set('trust proxy', 1);
 
-const allowedOrigins = [
-  process.env.CLIENT_URL,
-  'https://farm2-retail.vercel.app',
-  /^https?:\/\/[a-zA-Z0-9]([a-zA-Z0-9-]*[a-zA-Z0-9])?\.vercel\.app$/,
-];
+const normalizeOrigin = (origin = '') => origin.trim().replace(/\/+$/, '');
+
+const allowedOrigins = Array.from(
+  new Set(
+    (process.env.CORS_ORIGINS || '')
+      .split(',')
+      .map(normalizeOrigin)
+      .filter(Boolean),
+  ),
+);
+
+const isAllowedOrigin = (origin) => {
+  if (!origin) {
+    return true;
+  }
+
+  return allowedOrigins.includes(normalizeOrigin(origin));
+};
+
+const handleCorsOrigin = (label) => (origin, callback) => {
+  if (isAllowedOrigin(origin)) {
+    return callback(null, true);
+  }
+
+  console.error(`${label} blocked: ${origin}`);
+  callback(new Error(`Not allowed by ${label}`));
+};
+
+if (allowedOrigins.length === 0) {
+  console.warn('No CORS_ORIGINS configured. Browser requests will be blocked.');
+}
 
 const io = new Server(server, {
   cors: {
-    origin: (origin, callback) => {
-      if (!origin) {
-        return callback(null, true);
-      }
-
-      if (
-        origin.startsWith('http://localhost:') ||
-        origin.startsWith('http://127.0.0.1:')
-      ) {
-        return callback(null, true);
-      }
-
-      const isAllowed = allowedOrigins.some((allowed) => {
-        if (typeof allowed === 'string') {
-          return origin === allowed;
-        }
-
-        if (allowed instanceof RegExp) {
-          return allowed.test(origin);
-        }
-
-        return false;
-      });
-
-      if (isAllowed) {
-        callback(null, true);
-      } else {
-        console.error(`❌ Socket.io CORS blocked: ${origin}`);
-        callback(new Error('Not allowed by Socket.io CORS'));
-      }
-    },
+    origin: handleCorsOrigin('Socket.io CORS'),
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true,
   },
@@ -86,37 +82,7 @@ app.use(
 // Middleware
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (!origin) {
-        return callback(null, true);
-      }
-
-      if (
-        origin.startsWith('http://localhost:') ||
-        origin.startsWith('http://127.0.0.1:')
-      ) {
-        return callback(null, true);
-      }
-
-      const isAllowed = allowedOrigins.some((allowed) => {
-        if (typeof allowed === 'string') {
-          return origin === allowed;
-        }
-
-        if (allowed instanceof RegExp) {
-          return allowed.test(origin);
-        }
-
-        return false;
-      });
-
-      if (isAllowed) {
-        callback(null, true);
-      } else {
-        console.error(`❌ CORS blocked: ${origin}`);
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
+    origin: handleCorsOrigin('CORS'),
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization', 'token'],
@@ -129,8 +95,8 @@ app.use(arcjetMiddleware);
 
 mongoose
   .connect(process.env.MONGO_URL)
-  .then(() => console.log('✅ MongoDB Connected'))
-  .catch((err) => console.error('❌ MongoDB connection error:', err));
+  .then(() => console.log('[MongoDB] Connected'))
+  .catch((err) => console.error('[MongoDB] Connection error:', err));
 
 app.use('/api/auth', authRoute);
 app.use('/api/users', userRoute);
@@ -144,13 +110,13 @@ app.use('/api/messages', messageRoute);
 const activeUsers = new Map();
 
 io.on('connection', (socket) => {
-  console.log(`✅ User connected: ${socket.id}`);
+  console.log(`[Socket] User connected: ${socket.id}`);
 
   socket.on('user:join', (userId) => {
     activeUsers.set(userId, socket.id);
     socket.userId = userId;
     socket.broadcast.emit('user:online', { userId });
-    console.log(`👤 User ${userId} joined (${socket.id})`);
+    console.log(`[Socket] User ${userId} joined (${socket.id})`);
   });
 
   socket.on('order:created', (orderData) => {
@@ -225,9 +191,9 @@ io.on('connection', (socket) => {
     if (socket.userId) {
       activeUsers.delete(socket.userId);
       socket.broadcast.emit('user:offline', { userId: socket.userId });
-      console.log(`👋 User ${socket.userId} disconnected`);
+      console.log(`[Socket] User ${socket.userId} disconnected`);
     }
-    console.log(`❌ Socket disconnected: ${socket.id}`);
+    console.log(`[Socket] Disconnected: ${socket.id}`);
   });
 
   socket.on('error', (error) => {
@@ -246,7 +212,7 @@ const PORT = process.env.PORT || 5000;
 
 if (process.env.NODE_ENV !== 'test') {
   server.listen(PORT, () => {
-    console.log(`🚀 Server running on port ${PORT}`);
-    console.log('🔌 WebSocket server ready');
+    console.log(`[Server] Running on port ${PORT}`);
+    console.log('[Socket] WebSocket server ready');
   });
 }
