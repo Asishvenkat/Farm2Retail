@@ -35,8 +35,13 @@ const ModernRegister = () => {
       });
 
       if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Registration failed');
+        const errorData = await response.json().catch(() => null);
+        const errorMessage =
+          typeof errorData === 'string'
+            ? errorData
+            : errorData?.message || errorData?.error || 'Registration failed';
+
+        throw new Error(errorMessage);
       }
 
       const data = await response.json();

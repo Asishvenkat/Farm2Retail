@@ -186,6 +186,7 @@ const Cart = () => {
   const navigate = useNavigate();
   const currentUser = useSelector((state) => state.user?.currentUser);
   const isLoggedIn = currentUser !== null;
+  const [isRazorpayLoaded, setIsRazorpayLoaded] = useState(false);
 
   const [showModal, setShowModal] = useState(false);
   const [address, setAddress] = useState({
@@ -198,22 +199,48 @@ const Cart = () => {
   });
 
   useEffect(() => {
+    if (window.Razorpay) {
+      setIsRazorpayLoaded(true);
+      return undefined;
+    }
+
     const script = document.createElement('script');
     script.src = 'https://checkout.razorpay.com/v1/checkout.js';
     script.async = true;
+    script.onload = () => setIsRazorpayLoaded(true);
+    script.onerror = () => setIsRazorpayLoaded(false);
     document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
   }, []);
 
   const proceedToPayment = async () => {
     try {
+      if (!isRazorpayLoaded || !window.Razorpay) {
+        alert('Payment gateway is still loading. Please try again.');
+        return;
+      }
+
       const orderUrl = `${API_BASE_URL}payment/order`;
       const { data } = await axios.post(orderUrl, {
         amount: cart.total * 100,
         currency: 'INR',
       });
 
+      const razorpayKey = data.key || RAZORPAY_KEY_ID;
+
+      if (!razorpayKey) {
+        throw new Error('Razorpay key is missing. Please check your configuration.');
+      }
+
+      if (!data.id) {
+        throw new Error('Razorpay order creation failed. Please try again.');
+      }
+
       const options = {
-        key: RAZORPAY_KEY_ID,
+        key: razorpayKey,
         amount: data.amount,
         currency: data.currency,
         name: 'E-Commerce Store',
@@ -278,9 +305,23 @@ const Cart = () => {
       };
 
       const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', function (response) {
+        const failureMessage =
+          response?.error?.description ||
+          response?.error?.reason ||
+          'Payment Failed';
+
+        console.error('Razorpay payment failed:', response?.error);
+        alert(failureMessage);
+      });
       rzp.open();
     } catch (err) {
-      alert('Payment initialization failed. Please try again.');
+      console.error('Payment initialization failed:', err);
+      alert(
+        err?.response?.data?.message ||
+          err?.message ||
+          'Payment initialization failed. Please try again.'
+      );
     }
   };
 
