@@ -115,6 +115,7 @@ io.on('connection', (socket) => {
   socket.on('user:join', (userId) => {
     activeUsers.set(userId, socket.id);
     socket.userId = userId;
+    socket.join(String(userId));
     socket.broadcast.emit('user:online', { userId });
     console.log(`[Socket] User ${userId} joined (${socket.id})`);
   });
