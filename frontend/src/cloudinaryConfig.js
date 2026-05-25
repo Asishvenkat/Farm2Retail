@@ -1,21 +1,19 @@
 // Cloudinary configuration - using environment variables
-// Upload preset 'farmers_preset' must be created in Cloudinary dashboard (Settings > Upload > Upload presets)
+// Create the upload preset in Cloudinary Dashboard > Settings > Upload presets
 export const CLOUDINARY_CONFIG = {
-  cloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'YOUR_CLOUD_NAME',
-  apiKey: import.meta.env.VITE_CLOUDINARY_API_KEY || '741568897314964',
-  uploadPreset: 'farmers_preset', // Hardcoded - create this in Cloudinary dashboard
+  cloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME,
+  apiKey: import.meta.env.VITE_CLOUDINARY_API_KEY,
+  uploadPreset: import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET,
 };
 
 // Validate configuration
-if (
-  !CLOUDINARY_CONFIG.cloudName ||
-  CLOUDINARY_CONFIG.cloudName === 'YOUR_CLOUD_NAME'
-) {
-  console.error('❌ Cloudinary Cloud Name NOT SET!');
-  console.error('👉 Go to: https://cloudinary.com/console');
-  console.error('👉 Copy your Cloud Name from the dashboard');
-  console.error('👉 Update VITE_CLOUDINARY_CLOUD_NAME in frontend/.env file');
-  console.error('👉 Restart the dev server');
+if (!CLOUDINARY_CONFIG.cloudName || !CLOUDINARY_CONFIG.uploadPreset) {
+  console.error('[Cloudinary] Configuration is missing.');
+  console.error('[Cloudinary] Set VITE_CLOUDINARY_CLOUD_NAME in frontend/.env');
+  console.error(
+    '[Cloudinary] Set VITE_CLOUDINARY_UPLOAD_PRESET in frontend/.env',
+  );
+  console.error('[Cloudinary] Restart the dev server after updating envs.');
 }
 
 // Upload image to Cloudinary
@@ -30,36 +28,29 @@ export const uploadToCloudinary = async (file) => {
       {
         method: 'POST',
         body: formData,
-      }
+      },
     );
 
     if (!response.ok) {
       const errorData = await response.json();
-      console.error('❌ Cloudinary Error Response:', errorData);
+      console.error('[Cloudinary] Error response:', errorData);
       console.error(
-        '🔴 Error Message:',
-        errorData.error?.message || 'Unknown error'
+        '[Cloudinary] Error message:',
+        errorData.error?.message || 'Unknown error',
       );
 
       if (errorData.error?.message?.includes('preset')) {
-        console.error('');
-        console.error('⚠️  UPLOAD PRESET NOT FOUND!');
+        console.error('[Cloudinary] Upload preset not found.');
         console.error(
-          '👉 Go to: https://console.cloudinary.com/console/dgfpyihjt/settings/upload'
+          '[Cloudinary] Create the preset configured in VITE_CLOUDINARY_UPLOAD_PRESET.',
         );
-        console.error('👉 Scroll to "Upload presets" section');
-        console.error('👉 Click "Add upload preset"');
-        console.error('👉 Name: farmers_preset');
-        console.error('👉 Signing Mode: Unsigned');
-        console.error('👉 Click Save');
-        console.error('');
       }
 
       throw new Error(errorData.error?.message || 'Upload failed');
     }
 
     const data = await response.json();
-    return data.secure_url; // Returns the image URL
+    return data.secure_url;
   } catch (error) {
     console.error('Cloudinary upload error:', error);
     throw error;

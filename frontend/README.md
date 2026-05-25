@@ -66,6 +66,7 @@ VITE_RAZORPAY_KEY_ID=your_razorpay_key_id
 # Cloudinary
 VITE_CLOUDINARY_CLOUD_NAME=your_cloud_name
 VITE_CLOUDINARY_API_KEY=your_api_key
+VITE_CLOUDINARY_UPLOAD_PRESET=farmers_preset
 
 # API Configuration
 VITE_API_BASE_URL=http://localhost:5000/api/

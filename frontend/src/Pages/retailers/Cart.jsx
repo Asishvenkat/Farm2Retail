@@ -14,7 +14,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const API_BASE_URL =
-  import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api/';
+  import.meta.env.VITE_API_BASE_URL;
 const RAZORPAY_KEY_ID = import.meta.env.VITE_RAZORPAY_KEY_ID;
 
 const Container = styled.div``;
