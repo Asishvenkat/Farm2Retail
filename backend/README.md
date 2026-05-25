@@ -15,7 +15,7 @@ A secure and scalable REST API for the Farm2Retail e-commerce platform, connecti
 - **Real-time Features**: WebSocket support via Socket.io for live updates
 - **Security**:
   - Arcjet Shield for SQL injection and XSS protection
-  - Bot detection and rate limiting
+  - Bot detection
   - Helmet.js for HTTP headers security
   - CORS configuration for cross-origin requests
 
@@ -25,9 +25,6 @@ A secure and scalable REST API for the Farm2Retail e-commerce platform, connecti
 
 - **Shield**: Protection against SQL injection, XSS, and common attacks
 - **Bot Detection**: Blocks automated bots while allowing search engines
-- **Rate Limiting**:
-  - Auth endpoints: 5 requests per 15 minutes
-  - Payment endpoints: 10 requests per hour
 - **IP Filtering**: Hosting IP detection and spoofed bot verification
 
 ### Additional Security
@@ -78,7 +75,7 @@ ARCJET_ENV=development
 
 # Server
 PORT=5000
-CORS_ORIGINS=http://localhost:5174,https://farm2-retail.vercel.app
+CORS_ORIGINS=http://localhost:5173,http://localhost:5174,https://farm2-retail.vercel.app
 ```
 
 4. Start the development server:

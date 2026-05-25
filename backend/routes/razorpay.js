@@ -2,7 +2,6 @@
 import express from 'express';
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
-import { paymentRateLimit } from '../middleware/arcjet.js';
 
 const router = express.Router();
 
@@ -30,7 +29,7 @@ const ensureRazorpay = () => {
 };
 
 // Create Razorpay Order
-router.post('/order', paymentRateLimit, async (req, res) => {
+router.post('/order', async (req, res) => {
   try {
     const { amount, currency = 'INR' } = req.body;
     const normalizedAmount = Number(amount);
@@ -76,7 +75,7 @@ router.post('/order', paymentRateLimit, async (req, res) => {
 });
 
 // Validate Payment Signature
-router.post('/order/validate', paymentRateLimit, async (req, res) => {
+router.post('/order/validate', async (req, res) => {
   const client = ensureRazorpay();
 
   if (!client) {

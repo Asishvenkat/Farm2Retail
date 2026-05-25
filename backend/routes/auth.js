@@ -3,14 +3,9 @@ const router = express.Router();
 import User from '../models/User.js';
 import CryptoJS from 'crypto-js';
 import jwt from 'jsonwebtoken';
-import { authRateLimit } from '../middleware/arcjet.js';
-
-// Middleware wrapper that skips rate limiting in test environment
-const conditionalAuthRateLimit =
-  process.env.NODE_ENV === 'test' ? (req, res, next) => next() : authRateLimit;
 
 //REGISTER
-router.post('/register', conditionalAuthRateLimit, async (req, res) => {
+router.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
 
   if (!username || !email || !password) {
@@ -48,7 +43,7 @@ router.post('/register', conditionalAuthRateLimit, async (req, res) => {
 });
 
 //LOGIN
-router.post('/login', conditionalAuthRateLimit, async (req, res) => {
+router.post('/login', async (req, res) => {
   try {
     const user = await User.findOne({ username: req.body.username });
 
