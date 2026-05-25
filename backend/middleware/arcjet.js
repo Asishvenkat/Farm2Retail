@@ -2,6 +2,110 @@ import arcjet, { shield, detectBot, tokenBucket } from '@arcjet/node';
 import { isSpoofedBot } from '@arcjet/inspect';
 
 const { ARCJET_KEY } = process.env;
+const isProduction = process.env.NODE_ENV === 'production';
+
+let hasLoggedLocalSkip = false;
+
+const normalizeIp = (ip = '') =>
+  String(ip).trim().replace(/^\[|\]$/g, '').replace(/^::ffff:/, '');
+
+const getHeaderIp = (value) => {
+  if (Array.isArray(value)) {
+    return normalizeIp(value[0] || '');
+  }
+
+  if (typeof value !== 'string') {
+    return '';
+  }
+
+  return normalizeIp(value.split(',')[0] || '');
+};
+
+const isPrivateIpv4 = (ip) => {
+  const octets = ip.split('.').map(Number);
+
+  if (octets.length !== 4 || octets.some((octet) => Number.isNaN(octet))) {
+    return false;
+  }
+
+  return (
+    octets[0] === 0 ||
+    octets[0] === 10 ||
+    octets[0] === 127 ||
+    (octets[0] === 169 && octets[1] === 254) ||
+    (octets[0] === 172 && octets[1] >= 16 && octets[1] <= 31) ||
+    (octets[0] === 192 && octets[1] === 168)
+  );
+};
+
+const isLocalOrPrivateIp = (ip) => {
+  const normalizedIp = normalizeIp(ip).toLowerCase();
+
+  if (!normalizedIp) {
+    return true;
+  }
+
+  if (normalizedIp === '::1' || normalizedIp === '::') {
+    return true;
+  }
+
+  if (
+    normalizedIp.startsWith('fc') ||
+    normalizedIp.startsWith('fd') ||
+    normalizedIp.startsWith('fe80:')
+  ) {
+    return true;
+  }
+
+  return isPrivateIpv4(normalizedIp);
+};
+
+const getClientIp = (req) => {
+  const headerCandidates = [
+    'x-forwarded-for',
+    'x-real-ip',
+    'cf-connecting-ip',
+    'fly-client-ip',
+    'x-vercel-forwarded-for',
+    'true-client-ip',
+    'x-client-ip',
+  ];
+
+  for (const header of headerCandidates) {
+    const headerIp = getHeaderIp(req.headers?.[header]);
+
+    if (headerIp) {
+      return headerIp;
+    }
+  }
+
+  return normalizeIp(
+    req.ip || req.socket?.remoteAddress || req.connection?.remoteAddress || '',
+  );
+};
+
+const shouldSkipArcjet = (req) => {
+  if (process.env.ARCJET_ENV === 'development') {
+    return false;
+  }
+
+  return !isProduction && isLocalOrPrivateIp(getClientIp(req));
+};
+
+const shouldBypassArcjet = (req) => {
+  if (!shouldSkipArcjet(req)) {
+    return false;
+  }
+
+  if (!hasLoggedLocalSkip) {
+    console.warn(
+      'Arcjet skipped for local/private IP traffic outside production. Set ARCJET_ENV=development locally to enable Arcjet dev mode.',
+    );
+    hasLoggedLocalSkip = true;
+  }
+
+  return true;
+};
 
 let aj = null;
 
@@ -43,36 +147,36 @@ if (ARCJET_KEY) {
 
 // Arcjet middleware wrapper
 export const arcjetMiddleware = async (req, res, next) => {
-  if (!aj) {
+  if (!aj || shouldBypassArcjet(req)) {
     return next();
   }
 
   try {
     const decision = await aj.protect(req, { requested: 5 }); // Deduct 5 tokens from the bucket
-    console.log('Arcjet decision', decision);
+
+    if (decision.isErrored()) {
+      console.warn('Arcjet skipped request after error:', decision.reason.message);
+      return next();
+    }
 
     if (decision.isDenied()) {
       if (decision.reason.isRateLimit()) {
-        res.writeHead(429, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'Too Many Requests' }));
-      } else if (decision.reason.isBot()) {
-        res.writeHead(403, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'No bots allowed' }));
-      } else {
-        res.writeHead(403, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'Forbidden' }));
+        return res.status(429).json({ error: 'Too Many Requests' });
       }
-      return;
+
+      if (decision.reason.isBot()) {
+        return res.status(403).json({ error: 'No bots allowed' });
+      }
+
+      return res.status(403).json({ error: 'Forbidden' });
     }
 
     // Requests from hosting IPs are likely from bots, so they can usually be
     // blocked. However, consider your use case - if this is an API endpoint
     // then hosting IPs might be legitimate.
     // https://docs.arcjet.com/blueprints/vpn-proxy-detection
-    if (decision.ip.isHosting()) {
-      res.writeHead(403, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'Forbidden' }));
-      return;
+    if (decision.ip?.isHosting?.()) {
+      return res.status(403).json({ error: 'Forbidden' });
     }
 
     // Paid Arcjet accounts include additional verification checks using IP data.
@@ -80,9 +184,7 @@ export const arcjetMiddleware = async (req, res, next) => {
     // separately.
     // https://docs.arcjet.com/bot-protection/reference#bot-verification
     if (decision.results.some(isSpoofedBot)) {
-      res.writeHead(403, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ error: 'Forbidden' }));
-      return;
+      return res.status(403).json({ error: 'Forbidden' });
     }
 
     next();
@@ -94,7 +196,7 @@ export const arcjetMiddleware = async (req, res, next) => {
 
 // Specific middleware for auth endpoints (5 requests per 15 minutes)
 export const authRateLimit = async (req, res, next) => {
-  if (!aj) {
+  if (!aj || shouldBypassArcjet(req)) {
     return next();
   }
 
@@ -110,6 +212,14 @@ export const authRateLimit = async (req, res, next) => {
         }),
       ],
     });
+
+    if (decision.isErrored()) {
+      console.warn(
+        'Arcjet skipped auth rate limit after error:',
+        decision.reason.message,
+      );
+      return next();
+    }
 
     if (decision.isDenied()) {
       if (decision.reason.isRateLimit()) {
@@ -128,7 +238,7 @@ export const authRateLimit = async (req, res, next) => {
 
 // Specific middleware for payment endpoints (10 requests per hour)
 export const paymentRateLimit = async (req, res, next) => {
-  if (!aj) {
+  if (!aj || shouldBypassArcjet(req)) {
     return next();
   }
 
@@ -144,6 +254,14 @@ export const paymentRateLimit = async (req, res, next) => {
         }),
       ],
     });
+
+    if (decision.isErrored()) {
+      console.warn(
+        'Arcjet skipped payment rate limit after error:',
+        decision.reason.message,
+      );
+      return next();
+    }
 
     if (decision.isDenied()) {
       if (decision.reason.isRateLimit()) {

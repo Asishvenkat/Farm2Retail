@@ -19,6 +19,8 @@ import messageRoute from './routes/message.js';
 const app = express();
 const server = http.createServer(app);
 
+app.set('trust proxy', 1);
+
 const allowedOrigins = [
   process.env.CLIENT_URL,
   'https://farm2-retail.vercel.app',
@@ -28,17 +30,29 @@ const allowedOrigins = [
 const io = new Server(server, {
   cors: {
     origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
-      if (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
+      if (!origin) {
         return callback(null, true);
       }
-      
+
+      if (
+        origin.startsWith('http://localhost:') ||
+        origin.startsWith('http://127.0.0.1:')
+      ) {
+        return callback(null, true);
+      }
+
       const isAllowed = allowedOrigins.some((allowed) => {
-        if (typeof allowed === 'string') return origin === allowed;
-        if (allowed instanceof RegExp) return allowed.test(origin);
+        if (typeof allowed === 'string') {
+          return origin === allowed;
+        }
+
+        if (allowed instanceof RegExp) {
+          return allowed.test(origin);
+        }
+
         return false;
       });
-      
+
       if (isAllowed) {
         callback(null, true);
       } else {
@@ -50,8 +64,6 @@ const io = new Server(server, {
     credentials: true,
   },
 });
-
-
 
 app.set('io', io);
 
@@ -75,17 +87,29 @@ app.use(
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
-      if (origin.startsWith('http://localhost:') || origin.startsWith('http://127.0.0.1:')) {
+      if (!origin) {
         return callback(null, true);
       }
-      
+
+      if (
+        origin.startsWith('http://localhost:') ||
+        origin.startsWith('http://127.0.0.1:')
+      ) {
+        return callback(null, true);
+      }
+
       const isAllowed = allowedOrigins.some((allowed) => {
-        if (typeof allowed === 'string') return origin === allowed;
-        if (allowed instanceof RegExp) return allowed.test(origin);
+        if (typeof allowed === 'string') {
+          return origin === allowed;
+        }
+
+        if (allowed instanceof RegExp) {
+          return allowed.test(origin);
+        }
+
         return false;
       });
-      
+
       if (isAllowed) {
         callback(null, true);
       } else {

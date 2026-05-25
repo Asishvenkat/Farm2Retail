@@ -33,9 +33,14 @@ const ensureRazorpay = () => {
 router.post('/order', paymentRateLimit, async (req, res) => {
   try {
     const { amount, currency = 'INR' } = req.body;
+    const normalizedAmount = Number(amount);
+
+    if (!Number.isFinite(normalizedAmount) || normalizedAmount <= 0) {
+      return res.status(400).json({ message: 'A valid payment amount is required.' });
+    }
 
     const options = {
-      amount: amount,
+      amount: Math.round(normalizedAmount),
       currency: currency,
       receipt: `receipt_order_${Math.random() * 10000}`,
     };
@@ -53,10 +58,20 @@ router.post('/order', paymentRateLimit, async (req, res) => {
     if (!order) {
       return res.status(500).send('Order creation failed');
     }
-    res.json(order);
+
+    res.json({
+      ...order,
+      key: process.env.RAZORPAY_KEY_ID,
+    });
   } catch (error) {
     console.error('Razorpay Order Error:', error);
-    res.status(500).send('Server error');
+    res.status(500).json({
+      message:
+        error?.error?.description ||
+        error?.description ||
+        error?.message ||
+        'Unable to initialize Razorpay order.',
+    });
   }
 });
 

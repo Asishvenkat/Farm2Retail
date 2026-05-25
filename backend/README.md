@@ -74,6 +74,7 @@ RAZORPAY_SECRET=your_razorpay_secret
 
 # Arcjet (Optional - defaults to test mode)
 ARCJET_KEY=your_arcjet_key
+ARCJET_ENV=development
 
 # Server
 PORT=5000

@@ -37,7 +37,13 @@ router.post('/register', conditionalAuthRateLimit, async (req, res) => {
     const savedUser = await newUser.save();
     res.status(201).json(savedUser);
   } catch (err) {
-    res.status(500).json(err);
+    if (err?.code === 11000) {
+      return res.status(409).json({
+        message: 'A user with that username or email already exists',
+      });
+    }
+
+    res.status(500).json({ message: 'Unable to register user' });
   }
 });
 
